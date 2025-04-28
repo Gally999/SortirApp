@@ -4,10 +4,10 @@ namespace App\Entity\Enum;
 
 enum EtatEnum: string
 {
-    case Ouverte = 'OU';
-    case Cloturee = 'CL';
-    case EnCours = 'EC';
-    case Terminee = 'TE';
-    case Annulee = 'AN';
-    case Historisee = 'HI';
+    case Ouverte = 'Ouverte';
+    case Cloturee = 'Cloturee';
+    case EnCours = 'En Cours';
+    case Terminee = 'Terminee';
+    case Annulee = 'Annulee';
+    case Historisee = 'Historisee';
 }
