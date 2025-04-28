@@ -2,12 +2,14 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Campus;
 use App\Entity\Participant;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class AppFixtures extends Fixture
+class ParticipantFixtures extends Fixture implements DependentFixtureInterface
 {
     private UserPasswordHasherInterface $passwordHasher;
 
@@ -17,11 +19,13 @@ class AppFixtures extends Fixture
     }
     public function load(ObjectManager $manager): void
     {
+        $faker = \Faker\Factory::create('fr_FR');
         $user = new Participant();
         $user->setNom('admin');
         $user->setPrenom('admin');
         $user->setEmail('a@a.com');
         $user->setPseudo('admin');
+        $user->setCampus($this->getReference('campus1', Campus::class));
 
         $hashedPassword = $this->passwordHasher->hashPassword($user, 'admin');
         $user->setPassword($hashedPassword);
@@ -32,5 +36,10 @@ class AppFixtures extends Fixture
 
         $manager->persist($user);
         $manager->flush();
+    }
+
+    public function getDependencies(): array
+    {
+        return [CampusFixtures::class];
     }
 }

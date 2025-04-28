@@ -2,12 +2,12 @@
 
 namespace App\Entity\Enum;
 
-enum EtatEnum: string
+enum EtatEnum
 {
-    case Ouverte = 'Ouverte';
-    case Cloturee = 'Cloturee';
-    case EnCours = 'En Cours';
-    case Terminee = 'Terminee';
-    case Annulee = 'Annulee';
-    case Historisee = 'Historisee';
+    case Ouverte;
+    case Cloturee;
+    case EnCours;
+    case Terminee;
+    case Annulee;
+    case Historisee;
 }
