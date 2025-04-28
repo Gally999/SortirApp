@@ -34,6 +34,8 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
         $user->setAdministrateur(true);
         $user->setActif(true);
 
+        $this->addReference('admin', $user);
+
         $manager->persist($user);
         $manager->flush();
     }
