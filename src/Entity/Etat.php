@@ -4,16 +4,20 @@ namespace App\Entity;
 
 use App\Repository\EtatRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EtatRepository::class)]
 class Etat
 {
+    public const ETATS = ['Ouverte', 'Cloturee', 'En cours', 'Terminee', 'Annulee', 'Historisee'];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
+    #[Assert\Choice(choices: self::ETATS, message: 'Choisissez un état de sortie valide')]
+    #[ORM\Column(length: 50, enumType: Enum\EtatEnum::class)]
     private ?string $libelle = null;
 
     public function getId(): ?int

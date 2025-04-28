@@ -6,7 +6,9 @@ use App\Repository\VilleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
+#[UniqueEntity(fields: ['nom', 'codePostal'], message: 'Cette ville existe déjà.')]
 #[ORM\Entity(repositoryClass: VilleRepository::class)]
 class Ville
 {
