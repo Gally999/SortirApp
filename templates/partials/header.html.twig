@@ -1,0 +1,33 @@
+<div class="flex justify-between shadow-xl sticky top-0">
+    <div class="flex items-center gap-4">
+    <a href="{{path('app_home')}}">
+    <img src="{{asset('img/logo.png')}}" width="150" height="150" alt="">
+    </a>
+    <p class="font-bold">Sortir.com</p>
+    </div>
+    <div class="content-center p-4">
+        <nav>
+            <ul class="flex gap-4 " >
+
+                {% if app.user and app.user.administrateur %}
+                <li>
+                    <a href="">Administrateur</a>
+                </li>
+                {% endif %}
+                {% if app.user  %}
+                <li>
+                    <a href="{{path('app_profile')}}">Mon profil</a>
+                </li>
+                <li>
+                    <a href="{{path('app_logout')}}">Se déconnecter</a>
+                </li>
+                {% else %}
+                <li>
+                    <a href="{{path('app_login')}}">Connexion</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{{ include('partials/_flash.html.twig') }}

@@ -60,9 +60,9 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
             throw new UnsupportedUserException(sprintf('Invalid user class "%s".', get_class($user)));
         }
 
-        if (!$user->isActif()) {
-            throw new \Exception('User is not actif.');
-        }
+        // if (!$user->isActif()) {
+        //     throw new \Exception('User is not actif.');
+        // }
 
         return $user;
 
