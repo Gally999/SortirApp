@@ -16,7 +16,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[UniqueEntity(fields: ['pseudo'], message: 'Ce pseudo est déjà utilisé.')]
 #[UniqueEntity(fields: ['email'], message: 'Ce mail est déjà utilisé.')]
 /*
-* Ajoute les contraintes côté sql (pas d'afficahge front bloquant la création en double)
+* Ajoute les contraintes côté sql (pas d'affichage front bloquant la création en double)
 */
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
 #[ORM\Table(
@@ -36,7 +36,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255, nullable: true, unique: true)]
+    #[ORM\Column(length: 180, unique: true)]
     private ?string $pseudo = null;
 
     /**
@@ -51,10 +51,10 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 15, nullable: true)]
