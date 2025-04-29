@@ -2,22 +2,50 @@
 
 namespace App\Entity;
 
-use App\Enum\EtatEnum;
-use App\Repository\SortieRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
+
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\SortieRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Callback;
+
 
 #[UniqueEntity(fields: ['nom', 'dateHeureDebut', 'lieu'], message: 'Cette sortie existe déjà.')]
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
 {
+    #[Callback]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        $now = new \DateTimeImmutable();
+
+        if ($this->dateHeureDebut < $now) {
+            $context->buildViolation('La date de sortie doit être dans le futur.')
+                ->atPath('dateHeureDebut')
+                ->addViolation();
+        }
+
+        if ($this->dateLimiteInscription < $now) {
+            $context->buildViolation('La date limite d\'inscription doit être dans le futur.')
+                ->atPath('dateLimiteInscription')
+                ->addViolation();
+        }
+
+        if ($this->dateHeureDebut < $this->dateLimiteInscription) {
+            $context->buildViolation('La date de sortie doit être après la date limite d\'inscription.')
+                ->atPath('dateHeureDebut')
+                ->addViolation();
+        }
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
+
 
     #[ORM\Column(length: 180)]
     private ?string $nom = null;
@@ -25,8 +53,8 @@ class Sortie
     #[ORM\Column]
     private ?\DateTimeImmutable $dateHeureDebut = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
-    private ?\DateTime $duree = null;
+    #[ORM\Column(nullable: true)]
+    private ?int $duree = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $dateLimiteInscription = null;
@@ -45,11 +73,11 @@ class Sortie
     #[ORM\JoinColumn(nullable: false)]
     private ?Lieu $lieu = null;
 
-    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\ManyToOne(targetEntity: Campus::class, inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Campus $campus = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(targetEntity: Participant::class, cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Participant $organisateur = null;
 
@@ -58,6 +86,7 @@ class Sortie
      */
     #[ORM\ManyToMany(targetEntity: Participant::class, inversedBy: 'sorties')]
     private Collection $participants;
+
 
     public function __construct()
     {
@@ -93,17 +122,27 @@ class Sortie
         return $this;
     }
 
-    public function getDuree(): ?\DateTime
+    public function getDuree(): ?int
     {
         return $this->duree;
     }
 
-    public function setDuree(?\DateTime $duree): static
+    public function setDuree(?int $duree): static
     {
         $this->duree = $duree;
 
         return $this;
     }
+
+    public function getDateHeureFin(): ?\DateTimeImmutable
+    {
+        if (!$this->dateHeureDebut || $this->duree === null) {
+            return null;
+        }
+
+        return $this->dateHeureDebut->add(new \DateInterval('PT' . $this->duree . 'M'));
+    }
+
 
     public function getDateLimiteInscription(): ?\DateTimeImmutable
     {

@@ -11,10 +11,13 @@
 
                 {% if app.user and app.user.administrateur %}
                 <li>
-                    <a href="">Administrateur</a>
+                    <a href="">Administration</a>
                 </li>
                 {% endif %}
                 {% if app.user  %}
+                <li>
+                    <a href="{{path('sortie_list')}}">Sorties</a>
+                </li>
                 <li>
                     <a href="{{path('app_profile')}}">Mon profil</a>
                 </li>
