@@ -44,9 +44,25 @@
     Publier
 </button>
 
-</div>
-<div class="text-center mt-8">
-<a href="{{path('sortie_list')}}" class="w-full bg-[#d17c47] text-white py-4 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#d17c47] transition duration-300 ease-in-out cursor-pointer focus:outline-none ">Retour à la liste</a>
+
+
 </div>
 
 {{ form_end(form) }}
+<div class="text-center mt-4 ">
+<form method="POST" action="{{ path('sortie_delete', parameters = {id: sortie.id}) }}"
+    onsubmit="return confirm('Confirmer la suppression ?');"
+>    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ sortie.id) }}">
+
+    <button
+        type="submit"
+        class="w-full bg-[#c75050] text-white py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-white transition duration-300 ease-in-out cursor-pointer focus:outline-none "
+    >
+        Supprimer
+    </button>
+</form>
+</div>
+
+<div class="text-center mt-8 ">
+<a href="{{path('sortie_list')}}" class="w-full bg-[#d17c47] text-white py-4 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#d17c47] transition duration-300 ease-in-out cursor-pointer focus:outline-none ">Retour à la liste</a>
+</div>

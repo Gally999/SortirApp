@@ -40,6 +40,8 @@ security:
     # - { path: ^/admin, roles: ROLE_ADMIN }
     - { path: ^/profile, roles: ROLE_USER }
     - { path: ^/sorties/, roles: ROLE_USER }
+    - { path: ^/sorties/modify/, roles: ROLE_ADMIN }
+    - { path: ^/sorties/delete/, roles: ROLE_ADMIN }
 
 when@test:
   security:

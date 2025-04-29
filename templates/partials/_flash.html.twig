@@ -3,14 +3,14 @@
         {% if label == 'success' %}
             {% set class = 'bg-[#018034]' %}
         {% elseif label == 'error' %}
-            {% set class = 'bg-red-500' %}
+            {% set class = 'bg-[#c75050]' %}
         {% elseif label == 'info' %}
             {% set class = 'bg-blue-500' %}
         {% else %}
             {% set class = 'bg-[#018034]' %}
         {% endif %}
         
-        <div class="fixed top-16 left-0 right-0 p-4 z-50 flash-notification">
+        <div class=" p-4 z-50 flash-notification">
             <div class="max-w-3xl mx-auto {{ class }} text-white p-4 rounded-lg shadow-lg flex items-center space-x-4">
 
                 <div class="flex-1 text-center text-sm">

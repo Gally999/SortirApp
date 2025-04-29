@@ -7,8 +7,9 @@ use App\Entity\Campus;
 use App\Entity\Sortie;
 use App\Enum\EtatEnum;
 use App\Form\SortieType;
-use App\Repository\CampusRepository;
+use App\Entity\Participant;
 use App\Repository\EtatRepository;
+use App\Repository\CampusRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,52 +36,64 @@ final class SortieController extends AbstractController
     {
         // dd($this->getUser()->getCampus());
 
+
         $sortie = new Sortie();
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
+        $user = $entityManager->getRepository(Participant::class)->find($this->getUser()->getId());
+        $campus = $user->getCampus();
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $action = $request->get('action');
 
-            // $etatRepo = $entityManager->getRepository(Etat::class);
-
-            $etat = $etatRepository->findOneBy(['libelle' => EtatEnum::EnCreation]);
-
-            if ($action === 'publier') {
+            $action = $request->get('action'); // 'save' ou 'publish'
+            if ($action === 'publish') {
                 $etat = $etatRepository->findOneBy(['libelle' => EtatEnum::Ouverte]);
+            } else {
+
+                $etat = $etatRepository->findOneBy(['libelle' => EtatEnum::EnCreation]);
             }
 
             if ($etat) {
                 $sortie->setEtat($etat);
             }
-
-            $sortie->setOrganisateur($this->getUser());
-
+            $sortie->setOrganisateur($user);
+            $sortie->setCampus($campus);
 
             $entityManager->persist($sortie);
             $entityManager->flush();
 
 
-            $this->addFlash('success', 'Sortie créée avec succès (État : ' . $sortie->getEtat()->getLibelle() . ')');
+            $this->addFlash('success', 'Sortie créée avec succès (État : ' . $etat->getLibelleString() . ')');
             return $this->redirectToRoute('app_profile');
         }
 
         return $this->render('sortie/create.html.twig', [
             'form' => $form,
+            'campus' => $campus
         ]);
     }
 
 
     #[Route('/modify/{id}', name: 'sortie_modify', methods: ['GET', 'POST'])]
-    public function modifySortie($id, Request $request, EntityManagerInterface $entityManager, SortieRepository $sortieRepository): Response
+    public function modifySortie($id, Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository, SortieRepository $sortieRepository): Response
     {;
+        $user = $entityManager->getRepository(Participant::class)->find($this->getUser()->getId());
+        $campus = $user->getCampus();
         $sortie = $sortieRepository->find($id);
-        if ($this->getUser()->getId() !== $sortie->getOrganisateur()->getId()) {
+
+        // autorisation de modification d'une sortie (rules)
+        if (!$sortie) {
+            $this->addFlash('error', 'Sortie introuvable');
+            return $this->redirectToRoute('sortie_list');
+        } elseif ($this->getUser()->getId() !== $sortie->getOrganisateur()->getId()) {
             $this->addFlash('error', 'Vous n\'avez pas le droit de modifier cette sortie');
             return $this->redirectToRoute('sortie_list');
-        } elseif (!$sortie) {
-            $this->addFlash('error', 'Sortie introuvable');
+        } elseif ($sortie->getEtat()->getLibelle() != EtatEnum::EnCreation) {
+            $this->addFlash('error', 'Vous ne pouvez modifier qu\'une sortie en cours de création (état actuel : ' .  $sortie->getEtat()->getLibelleString() . ')');
+            return $this->redirectToRoute('sortie_list');
+        } elseif (!$user->isAdministrateur()) {
+            $this->addFlash('error', 'Il faut être administrateur pour gérer une sortie');
             return $this->redirectToRoute('sortie_list');
         }
 
@@ -88,31 +101,66 @@ final class SortieController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $action = $request->get('action');
 
-            // Choix de l'état selon le bouton
-            $etatRepo = $entityManager->getRepository(Etat::class);
-            $etat = $etatRepo->findOneBy(['libelle' => EtatEnum::EnCreation]);
 
-            if ($action === 'publier') {
-                $etat = $etatRepo->findOneBy(['libelle' => EtatEnum::Ouverte]);
+            $action = $request->get('action'); // 'save' ou 'publish'
+            if ($action === 'publish') {
+                $etat = $etatRepository->findOneBy(['libelle' => EtatEnum::Ouverte]);
+            } else {
+
+                $etat = $etatRepository->findOneBy(['libelle' => EtatEnum::EnCreation]);
             }
 
             if ($etat) {
                 $sortie->setEtat($etat);
             }
-
-            $sortie->setOrganisateur($this->getUser());
+            $sortie->setOrganisateur($user);
+            $sortie->setCampus($campus);
 
             $entityManager->persist($sortie);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Sortie créée avec succès (État : ' . $sortie->getEtat()->getLibelle() . ')');
+
+            $this->addFlash('success', 'Sortie mise à jour avec succès (État : ' . $etat->getLibelleString() . ')');
             return $this->redirectToRoute('app_profile');
         }
-
         return $this->render('sortie/modify.html.twig', [
             'form' => $form,
+            'campus' => $campus,
+            'sortie' => $sortie
+
         ]);
+    }
+
+    #[Route('/delete/{id}', name: 'sortie_delete', methods: ['POST'])]
+    public function deleteSortie($id, EntityManagerInterface $entityManager, SortieRepository $sortieRepository, Request $request)
+    {
+        $user = $entityManager->getRepository(Participant::class)->find($this->getUser()->getId());
+        $sortie = $sortieRepository->find($id);
+
+        // autorisation de suppression d'une sortie (rules)
+        if (!$sortie) {
+            $this->addFlash('error', 'Sortie introuvable');
+            return $this->redirectToRoute('sortie_list');
+        } elseif ($this->getUser()->getId() !== $sortie->getOrganisateur()->getId()) {
+            $this->addFlash('error', 'Vous n\'avez pas le droit de supprimer cette sortie');
+            return $this->redirectToRoute('sortie_list');
+        } elseif ($sortie->getEtat()->getLibelle() != EtatEnum::EnCreation) {
+            $this->addFlash('error', 'Vous ne pouvez supprimer qu\'une sortie en cours de création (état actuel : ' .  $sortie->getEtat()->getLibelleString() . ')');
+            return $this->redirectToRoute('sortie_list');
+        } elseif (!$this->isCsrfTokenValid('delete' . $sortie->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token invalide');
+            return $this->redirectToRoute('sortie_list');
+        } elseif (!$user->isAdministrateur()) {
+            $this->addFlash('error', 'Il faut être administrateur pour gérer une sortie');
+            return $this->redirectToRoute('sortie_list');
+        }
+
+        if ($sortie instanceof Sortie) {
+            $entityManager->remove($sortie);
+            $entityManager->flush();
+            $this->addFlash('success', 'Sortie supprimée avec succès');
+            return $this->redirectToRoute('app_profile');
+        }
     }
 }

@@ -2,18 +2,45 @@
 
 namespace App\Entity;
 
-use App\Enum\EtatEnum;
-use App\Repository\SortieRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
+
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\SortieRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Callback;
+
 
 #[UniqueEntity(fields: ['nom', 'dateHeureDebut', 'lieu'], message: 'Cette sortie existe déjà.')]
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
 {
+    #[Callback]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        $now = new \DateTimeImmutable();
+
+        if ($this->dateHeureDebut < $now) {
+            $context->buildViolation('La date de sortie doit être dans le futur.')
+                ->atPath('dateHeureDebut')
+                ->addViolation();
+        }
+
+        if ($this->dateLimiteInscription < $now) {
+            $context->buildViolation('La date limite d\'inscription doit être dans le futur.')
+                ->atPath('dateLimiteInscription')
+                ->addViolation();
+        }
+
+        if ($this->dateHeureDebut < $this->dateLimiteInscription) {
+            $context->buildViolation('La date de sortie doit être après la date limite d\'inscription.')
+                ->atPath('dateHeureDebut')
+                ->addViolation();
+        }
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
