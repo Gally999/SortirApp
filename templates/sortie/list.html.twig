@@ -1,0 +1,39 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Liste des sorties | {{  parent() }}{% endblock %}
+
+{% block body %}
+    <h1>Liste des sorties</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nom de la sortie</th>
+                <th>Date de la sortie</th>
+                <th>Clôture</th>
+                <th>Inscrits/Places</th>
+                <th>Etat</th>
+                <th>Inscrit</th>
+                <th>Organisateur</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in sorties %}
+                <tr>
+                    <td>{{ s.nom }}</td>
+                    <td>{{ s.dateHeureDebut | date('d/m/Y H:i') }}</td>
+                    <td>{{ s.dateLimiteInscription | date('d/m/Y') }}</td>
+                    <td>{{ s.participants | length }} / {{ s.nbInscriptionMax }}</td>
+                    <td>{{ s.etat.libelle.value }}</td>
+                    <td>X</td>
+                    <td>{{ s.organisateur.prenom }} {{ s.organisateur.prenom }}</td>
+                    <td>A venir...</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+
+    </table>
+
+{% endblock %}
+
