@@ -20,23 +20,45 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $faker = \Faker\Factory::create('fr_FR');
-        $user = new Participant();
-        $user->setNom('admin');
-        $user->setPrenom('admin');
-        $user->setEmail('a@a.com');
-        $user->setPseudo('admin');
-        $user->setCampus($this->getReference('campus1', Campus::class));
 
-        $hashedPassword = $this->passwordHasher->hashPassword($user, 'admin');
-        $user->setPassword($hashedPassword);
+        // Création admin
+        $admin = new Participant();
+        $admin->setNom('admin');
+        $admin->setPrenom('admin');
+        $admin->setEmail('a@a.com');
+        $admin->setPseudo('admin');
+        $admin->setCampus($this->getReference('campus1', Campus::class));
 
-        $user->setRoles(['ROLE_ADMIN']);
-        $user->setAdministrateur(true);
-        $user->setActif(true);
+        $hashedPassword = $this->passwordHasher->hashPassword($admin, 'admin');
+        $admin->setPassword($hashedPassword);
 
-        $this->addReference('admin', $user);
+        $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setAdministrateur(true);
+        $admin->setActif(true);
 
-        $manager->persist($user);
+        $this->addReference('admin', $admin);
+
+        $manager->persist($admin);
+
+        for ($i = 0; $i < 10; $i++) {
+            $participant = new Participant();
+            $participant->setNom($faker->firstName());
+            $participant->setPrenom($faker->lastName());
+            $participant->setEmail("user$i@test.com");
+            $participant->setPseudo("user$i");
+            $participant->setCampus($this->getReference('campus' . $faker->numberBetween(0, 4), Campus::class));
+
+            $hashedPassword = $this->passwordHasher->hashPassword($participant, '123456');
+            $participant->setPassword($hashedPassword);
+
+            $participant->setRoles(['ROLE_USER']);
+            $participant->setAdministrateur(false);
+            $participant->setActif(true);
+
+            $manager->persist($participant);
+            $this->addReference('participant' . $i, $participant);
+        }
+
         $manager->flush();
     }
 

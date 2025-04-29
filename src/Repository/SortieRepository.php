@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Sortie;
+use App\Enum\EtatEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,4 +41,16 @@ class SortieRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findSortiesActives()
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder
+            ->addSelect('e')
+            ->leftJoin('s.etat', 'e')
+            ->where('e.libelle IN (:etats)')
+            ->setParameter('etats', EtatEnum::actives())
+            ->addOrderBy('s.dateHeureDebut', 'ASC');
+        $query = $queryBuilder->getQuery();
+        return $query->getResult();
+    }
 }
