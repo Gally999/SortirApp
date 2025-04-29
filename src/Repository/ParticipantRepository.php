@@ -33,6 +33,16 @@ class ParticipantRepository extends ServiceEntityRepository implements PasswordU
         $this->getEntityManager()->flush();
     }
 
+    public function findParticipantByPseudo($pseudo): ?Participant
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.pseudo = :val')
+            ->setParameter('val', $pseudo)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     //    /**
     //     * @return Participant[] Returns an array of Participant objects
     //     */

@@ -34,4 +34,20 @@ class ParticipantController extends AbstractController
             'form' => $form,
         ]);
     }
+    #[Route('/profile/{pseudo}', name: 'app_profile_show')]
+    public function showProfile($pseudo, ParticipantRepository $repo): Response
+    {
+        if ($this->getUser()->getPseudo() == $pseudo) {
+            return $this->redirectToRoute('app_profile');
+        }
+        $participant = $repo->findParticipantByPseudo($pseudo);
+        if (!$participant) {
+            $this->addFlash('error', 'Profil introuvable');
+            return $this->redirectToRoute('app_home');
+        }
+
+        return $this->render('profile/showProfile.html.twig', [
+            'participant' => $participant,
+        ]);
+    }
 }
