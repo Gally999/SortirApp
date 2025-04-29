@@ -2,8 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Etat;
-use App\Entity\Campus;
+use App\Form\SortieSearchType;
 use App\Entity\Sortie;
 use App\Enum\EtatEnum;
 use App\Form\SortieType;
@@ -11,23 +10,37 @@ use App\Entity\Participant;
 use App\Repository\EtatRepository;
 use App\Repository\CampusRepository;
 use App\Repository\SortieRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/sorties')]
 final class SortieController extends AbstractController
 {
     #[Route('/', name: 'sortie_list', methods: ['GET', 'POST'])]
-    public function list(SortieRepository $sortieRepository): Response
+    public function list(
+        SortieRepository $sortieRepository,
+        Request $request,
+    ): Response
     {
 
-        // $sorties = $sortieRepository->findBy(['etat.libelle' => ['En creation', 'Ouverte', 'Cloturee', 'En cours', 'Terminée']], ['dateHeureDebut' => 'DESC']);
-        $sorties = $sortieRepository->findSortiesActives();
+        //
+        $searchForm = $this->createForm(SortieSearchType::class);
+        $searchForm->handleRequest($request);
+
+        if ($searchForm->isSubmitted() && $searchForm->isValid()) {
+            $data = $searchForm->getData();
+            dd($data);
+        } else {
+            // Sorties par défaut - état = actif
+            $sorties = $sortieRepository->findSortiesActives();
+        }
+
         return $this->render('sortie/list.html.twig', [
             'sorties' => $sorties,
+            'searchForm' => $searchForm,
         ]);
     }
 

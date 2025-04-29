@@ -3,6 +3,65 @@
 {% block title %}Liste des sorties | {{  parent() }}{% endblock %}
 
 {% block body %}
+
+    <h2 class="font-light leading-snug tracking-tight text-slate-500 mx-auto my-6 w-full text-xl lg:max-w-2xl lg:text-4xl">Filtrer les sorties</h2>
+    <div class="flex flew-row items-center">
+        <div class="mt-10 flex items-center justify-center w-full">
+            {{ form_start(searchForm, {'attr': {'class': 'w-5/6'}}) }}
+            <div class="flex flex-row m-3 justify-around">
+                {{ form_label(searchForm.campus) }}
+                {{ form_widget(searchForm.campus, {'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                {% if searchForm.campus.vars.errors|length > 0 %}
+                    <p class="text-red-500 text-sm mt-2">
+                        {% for error in searchForm.campus.vars.errors %}
+                            <span>{{ error.message }}</span><br>
+                        {% endfor %}
+                    </p>
+                {% endif %}
+            </div>
+            <div class="flex flex-row m-3 p-3 items-start justify-between">
+                <p class="px-2">{{ form_label(searchForm.search) }}</p>
+                {{ form_widget(searchForm.search, {'attr': {'class': 'form-input mt-1 block w-1/3 rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                {% if searchForm.search.vars.errors|length > 0 %}
+                    <p class="text-red-500 text-sm mt-2">
+                        {% for error in searchForm.search.vars.errors %}
+                            <span>{{ error.message }}</span><br>
+                        {% endfor %}
+                    </p>
+                {% endif %}
+            </div>
+            <div class="flex flex-row justify-between w-1/2">
+                <div class="flex flex-row m-3">
+                    <p class="px-2">{{ form_label(searchForm.dateDebut) }}</p>
+                    {{ form_widget(searchForm.dateDebut, {'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                    {% if searchForm.dateDebut.vars.errors|length > 0 %}
+                        <p class="text-red-500 text-sm mt-2">
+                            {% for error in searchForm.dateDebut.vars.errors %}
+                                <span>{{ error.message }}</span><br>
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="flex flex-row m-3">
+                    <p class="px-2">{{ form_label(searchForm.dateFin) }}</p>
+                    {{ form_widget(searchForm.dateFin, {'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                    {% if searchForm.dateFin.vars.errors|length > 0 %}
+                        <p class="text-red-500 text-sm mt-2">
+                            {% for error in searchForm.dateFin.vars.errors %}
+                                <span>{{ error.message }}</span><br>
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <button class="mr-4 h-fit w-1/4 bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none">Rechercher</button>
+        {{ form_end(searchForm) }}
+
+    </div>
+
+
+
     <h1 class="font-light leading-snug tracking-tight text-slate-800 mx-auto my-6 w-full text-2xl lg:max-w-3xl lg:text-5xl">Liste des sorties</h1>
     <div class="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border px-4">
         <table class="w-full text-left table-auto min-w-max text-slate-800">
