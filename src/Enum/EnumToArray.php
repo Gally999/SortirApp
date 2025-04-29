@@ -19,4 +19,9 @@ trait EnumToArray
     {
         return array_combine(self::values(), self::names());
     }
+
+    public static function actives(): array
+    {
+        return [EtatEnum::EnCreation, EtatEnum::Ouverte, EtatEnum::EnCours, EtatEnum::Terminee, EtatEnum::Cloturee];
+    }
 }
