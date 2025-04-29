@@ -22,6 +22,6 @@ trait EnumToArray
 
     public static function actives(): array
     {
-        return [EtatEnum::EnCreation, EtatEnum::Ouverte, EtatEnum::EnCours, EtatEnum::Terminee, EtatEnum::Cloturee];
+        return [EtatEnum::EnCreation, EtatEnum::Ouverte, EtatEnum::EnCours, EtatEnum::Cloturee];
     }
 }
