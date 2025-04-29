@@ -30,11 +30,20 @@ class Etat
     {
         return $this->libelle;
     }
+    public function getLibelleString(): ?string
+    {
+        return $this->libelle?->value;
+    }
+
 
     public function setLibelle(EtatEnum $libelle): static
     {
         $this->libelle = $libelle;
 
         return $this;
+    }
+    public function __toString(): string
+    {
+        return $this->libelle?->value ?? '';
     }
 }

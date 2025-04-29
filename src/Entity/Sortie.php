@@ -16,8 +16,9 @@ class Sortie
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
+
 
     #[ORM\Column(length: 180)]
     private ?string $nom = null;
@@ -25,8 +26,8 @@ class Sortie
     #[ORM\Column]
     private ?\DateTimeImmutable $dateHeureDebut = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
-    private ?\DateTime $duree = null;
+    #[ORM\Column(nullable: true)]
+    private ?int $duree = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $dateLimiteInscription = null;
@@ -45,11 +46,11 @@ class Sortie
     #[ORM\JoinColumn(nullable: false)]
     private ?Lieu $lieu = null;
 
-    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\ManyToOne(targetEntity: Campus::class, inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Campus $campus = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(targetEntity: Participant::class, cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Participant $organisateur = null;
 
@@ -58,6 +59,7 @@ class Sortie
      */
     #[ORM\ManyToMany(targetEntity: Participant::class, inversedBy: 'sorties')]
     private Collection $participants;
+
 
     public function __construct()
     {
@@ -93,17 +95,27 @@ class Sortie
         return $this;
     }
 
-    public function getDuree(): ?\DateTime
+    public function getDuree(): ?int
     {
         return $this->duree;
     }
 
-    public function setDuree(?\DateTime $duree): static
+    public function setDuree(?int $duree): static
     {
         $this->duree = $duree;
 
         return $this;
     }
+
+    public function getDateHeureFin(): ?\DateTimeImmutable
+    {
+        if (!$this->dateHeureDebut || $this->duree === null) {
+            return null;
+        }
+
+        return $this->dateHeureDebut->add(new \DateInterval('PT' . $this->duree . 'M'));
+    }
+
 
     public function getDateLimiteInscription(): ?\DateTimeImmutable
     {

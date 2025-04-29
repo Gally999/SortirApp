@@ -25,7 +25,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $dateTimeInFuture = $faker->dateTimeBetween($max = 'now', '+2 months', $timezone = 'Europe/Paris');
             $sortie->setDateHeureDebut(\DateTimeImmutable::createFromMutable($dateTimeInFuture));
 
-            $sortie->setDuree($faker->dateTimeBetween($max = $dateTimeInFuture, $faker->dateTimeInInterval($dateTimeInFuture, '+3 hours')));
+            $sortie->setDuree($faker->numberBetween(30, 280));
 
             $dateLimiteInscription = $faker->dateTimeInInterval($max = $dateTimeInFuture, '-7 days');
             $sortie->setDateLimiteInscription(\DateTimeImmutable::createFromMutable($dateLimiteInscription));
@@ -35,7 +35,7 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
 
             $sortie->setLieu($this->getReference('lieu' . $faker->numberBetween(0, 19), Lieu::class));
             $sortie->setOrganisateur($this->getReference('admin', Participant::class));
-            $sortie->setInfosSortie($faker->paragraph($nbSentences = 3, $variableNbSentences = true));
+            $sortie->setInfosSortie($faker->paragraph($nbSentences = 2, $variableNbSentences = true));
 
             $manager->persist($sortie);
         }
