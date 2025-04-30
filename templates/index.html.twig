@@ -1,7 +1,67 @@
 {% extends 'layouts/base.html.twig' %}
 
 {% block body %}
-    <h1>Home</h1>
+
+<div class=" flex items-start justify-center bg-gray-50  px-4 py-8">
+<div class="max-w-7xl mt-8 w-full flex gap-12 items-center p-12 ">
+    
+    <!-- Texte et bouton -->
+    <div>
+      <h1 class="text-4xl font-bold text-gray-900 mb-6">Les sorties, c'est la vie !</h1>
+      <p class="text-lg text-gray-700 mb-8">
+        Sortir.com est une plateforme qui vous permet de trouver des sorties selon votre campus d'affectation,
+        et de vous inscrire aux sorties que vous voulez !
+        </p>
+        <p class="text-lg text-gray-700 mb-8">        Alors n'attendez plus et rejoignez-nous !
+        </p>
+      
+      <a href="{{ path('sortie_list') }}"
+         class="inline-block bg-[#fac108] text-black py-3 px-6 rounded-md shadow hover:bg-black hover:text-[#fac108] transition duration-300">
+        Voir les sorties de mon campus
+      </a>
+    </div>
+
+    <!-- Image -->
+    <div>
+      <img src="{{ asset('img/eni_batiment.png') }}" alt="ENI bâtiment"  width="1000" height="1000" class="max-w-full h-auto rounded-xl shadow-lg" /> 
+    </div>
+
+  </div>
+</div>
+<div class="bg-[#fac108] h-4 mt-18 w-[60%] mx-auto"></div>
+<div class="bg-gray-50 py-16 px-4 ">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-8">
+
+    <!-- Bloc 1 : Qui sommes-nous -->
+    <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition duration-300 border border-gray-100">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Qui sommes-nous ?</h2>
+      <p class="text-gray-600 text-base">
+        Sortir.com est la plateforme dédiée aux étudiants qui veulent bouger, se rencontrer et profiter de leur vie étudiante. 
+        Organisez ou participez à des sorties exclusivement entre étudiants de votre campus.
+      </p>
+    </div>
+
+    <!-- Bloc 2 : Le concept -->
+    <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition duration-300 border border-gray-100">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Le concept</h2>
+      <p class="text-gray-600 text-base">
+        Étudiant sur un campus ? Envie de sortir mais pas envie d'y aller seul ?
+        Découvrez des événements autour de vous — ciné, resto, rando ou soirée jeux — et rejoignez facilement d'autres étudiants de votre campus.
+      </p>
+    </div>
+
+    <!-- Bloc 3 : Pourquoi entre campus -->
+    <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition duration-300 border border-gray-100">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Pourquoi seulement avec mon campus ?</h2>
+      <p class="text-gray-600 text-base">
+        Parce que créer du lien localement, c’est plus simple et plus naturel. Vous partagez les mêmes cours, le même cadre de vie — alors partagez aussi des bons moments.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+
 {% endblock %}
 
 
