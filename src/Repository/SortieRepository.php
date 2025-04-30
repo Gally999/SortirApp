@@ -43,14 +43,16 @@ class SortieRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-    public function findSortiesActives(): array
+    public function findSortiesActives(Campus $campus): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder
-            ->addSelect('e')
-            ->leftJoin('s.etat', 'e')
+            ->leftJoin('s.campus', 'c')->addSelect('c')
+            ->leftJoin('s.etat', 'e')->addSelect('e')
             ->where('e.libelle IN (:etats)')
             ->setParameter('etats', EtatEnum::actives())
+            ->andWhere('s.campus = :campus')
+            ->setParameter('campus', $campus)
             ->addOrderBy('s.dateHeureDebut', 'ASC');
         $query = $queryBuilder->getQuery();
         return $query->getResult();

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Campus;
 use App\Entity\Sortie;
 use App\Form\SortieType;
 use App\Repository\ParticipantRepository;
@@ -48,8 +49,8 @@ final class SortieController extends AbstractController
                 $searchData->showTerminees
             );
         } else {
-            // Sorties par défaut - état = actif
-            $sorties = $sortieRepository->findSortiesActives();
+            // Sorties par défaut - état = actif + campus de l'utilisateur connecté
+            $sorties = $sortieRepository->findSortiesActives($participant->getCampus());
         }
 
         return $this->render('sortie/list.html.twig', [
