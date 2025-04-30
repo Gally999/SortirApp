@@ -20,11 +20,11 @@
                 {% endif %}
             </div>
             <div class="flex flex-row m-3 items-start justify-between">
-                <p class="px-2 content-center my-auto">{{ form_label(searchForm.search) }}</p>
-                {{ form_widget(searchForm.search, {'attr': {'class': 'form-input p-1 mt-1 block w-1/3 rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
-                {% if searchForm.search.vars.errors|length > 0 %}
+                <p class="px-2 content-center my-auto">{{ form_label(searchForm.searchTerm) }}</p>
+                {{ form_widget(searchForm.searchTerm, {'attr': {'class': 'form-input p-1 mt-1 block w-1/3 rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                {% if searchForm.searchTerm.vars.errors|length > 0 %}
                     <p class="text-red-500 text-sm mt-2">
-                        {% for error in searchForm.search.vars.errors %}
+                        {% for error in searchForm.searchTerm.vars.errors %}
                             <span>{{ error.message }}</span><br>
                         {% endfor %}
                     </p>
@@ -32,22 +32,22 @@
             </div>
             <div class="flex flex-row justify-between w-1/2 m-3">
                 <div class="flex flex-row">
-                    <p class="px-2">{{ form_label(searchForm.dateDebut) }}</p>
-                    {{ form_widget(searchForm.dateDebut, {'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
-                    {% if searchForm.dateDebut.vars.errors|length > 0 %}
+                    <p class="px-2">{{ form_label(searchForm.startDate) }}</p>
+                    {{ form_widget(searchForm.startDate, {'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                    {% if searchForm.startDate.vars.errors|length > 0 %}
                         <p class="text-red-500 text-sm mt-2">
-                            {% for error in searchForm.dateDebut.vars.errors %}
+                            {% for error in searchForm.startDate.vars.errors %}
                                 <span>{{ error.message }}</span><br>
                             {% endfor %}
                         </p>
                     {% endif %}
                 </div>
                 <div class="flex flex-row">
-                    <p class="px-2">{{ form_label(searchForm.dateFin) }}</p>
-                    {{ form_widget(searchForm.dateFin, {'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
-                    {% if searchForm.dateFin.vars.errors|length > 0 %}
+                    <p class="px-2">{{ form_label(searchForm.endDate) }}</p>
+                    {{ form_widget(searchForm.endDate, {'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                    {% if searchForm.endDate.vars.errors|length > 0 %}
                         <p class="text-red-500 text-sm mt-2">
-                            {% for error in searchForm.dateFin.vars.errors %}
+                            {% for error in searchForm.endDate.vars.errors %}
                                 <span>{{ error.message }}</span><br>
                             {% endfor %}
                         </p>
@@ -86,8 +86,8 @@
                         <td class="p-4"><p class="text-sm font-bold">{{ s.dateLimiteInscription | date('d/m/Y') }}</p></td>
                         <td class="p-4"><p class="text-sm font-bold">{{ s.participants | length }} / {{ s.nbInscriptionMax }}</p></td>
                         <td class="p-4"><p class="text-sm font-bold">{{ s.etat.libelle.value }}</p></td>
-                        <td class="p-4"><p class="text-sm font-bold">X</p></td>
-                        <td class="p-4"><p class="text-sm font-bold">{{ s.organisateur.prenom }} {{ s.organisateur.prenom }}</p></td>
+                        <td class="p-4"><p class="text-sm font-bold text-center">{{ currentUser in s.participants ? 'X' : '' }}</p></td>
+                        <td class="p-4"><p class="text-sm font-bold">{{ s.organisateur.prenom }} {{ s.organisateur.nom }}</p></td>
                         <td class="p-4"><p class="text-sm font-bold">
                             <div class="block text-center">
                                 <button class="text-slate-600 hover:text-slate-800">
@@ -108,6 +108,8 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <p>Mon id = {{ app.user.id }}</p>
     {% else %}
         <p>Pas encore de sortie, ajoutez la vôtre ! + ajouter bouton</p>
 
