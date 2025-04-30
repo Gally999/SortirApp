@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Repository\ParticipantRepository;
 use App\Enum\EtatEnum;
-use App\Form\SortieSearchType;
+use App\Form\SortieFilterType;
+use App\Model\SortieSearchData;
 use App\Repository\EtatRepository;
 use App\Entity\Participant;
 use App\Repository\CampusRepository;
@@ -20,24 +22,28 @@ final class SortieController extends AbstractController
     #[Route('/', name: 'sortie_list', methods: ['GET', 'POST'])]
     public function list(
         SortieRepository $sortieRepository,
-        EtatRepository $etatRepository,
+        ParticipantRepository $participantRepository,
         Request $request,
     ): Response
     {
-
-        //
-        $searchForm = $this->createForm(SortieSearchType::class);
+        $searchData = new SortieSearchData();
+        $searchForm = $this->createForm(SortieFilterType::class, $searchData);
         $searchForm->handleRequest($request);
 
         if ($searchForm->isSubmitted() && $searchForm->isValid()) {
-            $data = $searchForm->getData();
-            //dd($data);
 
-            $sorties = $sortieRepository->findSortiesActivesWithParams(
-                $data['campus'],
-                $data['search'],
-                $data['dateDebut'],
-                $data['dateFin'],
+            $participant = $participantRepository->find($this->getUser()->getId());
+            // dd($participant, $this->getUser()->getId());
+            $sorties = $sortieRepository->findSortiesWithFilters(
+                $searchData->campus,
+                $participant,
+                $searchData->searchTerm,
+                $searchData->startDate,
+                $searchData->endDate,
+                $searchData->isOrganisateur,
+                $searchData->isInscrit,
+                $searchData->isNotInscrit,
+                $searchData->showTerminees
             );
         } else {
             // Sorties par défaut - état = actif
@@ -47,6 +53,7 @@ final class SortieController extends AbstractController
         return $this->render('sortie/list.html.twig', [
             'sorties' => $sorties,
             'searchForm' => $searchForm,
+            'currentUser' => $participant,
         ]);
     }
 

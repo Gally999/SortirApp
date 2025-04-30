@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Campus;
+use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Enum\EtatEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -55,24 +56,34 @@ class SortieRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function findSortiesActivesWithParams(
+    public function findSortiesWithFilters(
         Campus $campus,
+        ?Participant $user = null,
         ?string $searchTerm = null,
         ?\DateTime $startDate = null,
-        ?\DateTime $endDate = null
+        ?\DateTime $endDate = null,
+        bool $isOrganisateur = false,
+        bool $isInscrit = false,
+        bool $isNotInscrit = false,
+        bool $showTerminees = false,
     ): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder
-            ->leftJoin('s.campus', 'c')
-            ->addSelect('c')
+            ->leftJoin('s.campus', 'c')->addSelect('c')
+            ->leftJoin('s.etat', 'e')->addSelect('e')
             ->where('s.campus = :campus')
-            ->leftJoin('s.etat', 'e')
-            ->addSelect('e')
-            ->andWhere('e.libelle IN (:etats)')
             ->setParameter('campus', $campus)
-            ->setParameter('etats', EtatEnum::actives())
             ->addOrderBy('s.dateHeureDebut', 'ASC');
+
+        if (!$showTerminees) {
+            $queryBuilder
+                ->andWhere('e.libelle IN (:etats)')
+                ->setParameter('etats', EtatEnum::actives());
+        } else {
+            $queryBuilder->andWhere('e.libelle = :etatTerminee')
+                ->setParameter('etatTerminee', EtatEnum::Terminee);
+        }
 
         if ($searchTerm) {
             $queryBuilder->andWhere('s.nom LIKE :search')
@@ -89,6 +100,25 @@ class SortieRepository extends ServiceEntityRepository
             $queryBuilder
                 ->andWhere('s.dateHeureDebut <= :endDate')
                 ->setParameter('endDate', $endDate);
+        }
+
+        if ($isOrganisateur) {
+            $queryBuilder
+                ->andWhere('s.organisateur = :user')
+                ->setParameter('user', $user);
+        }
+
+        // Si je suis inscrit
+        if ($isInscrit) {
+            $queryBuilder
+                ->andWhere(':user MEMBER OF s.participants')
+                ->setParameter('user', $user);
+        }
+
+        // Si je ne suis PAS inscrit
+        if ($isNotInscrit) {
+            $queryBuilder->andWhere(':user NOT MEMBER OF s.participants')
+                ->setParameter('user', $user);
         }
 
         return $queryBuilder->getQuery()->getResult();
