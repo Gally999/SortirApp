@@ -26,8 +26,7 @@ final class SortieController extends AbstractController
         SortieRepository $sortieRepository,
         ParticipantRepository $participantRepository,
         Request $request,
-    ): Response
-    {
+    ): Response {
         $participant = $participantRepository->find($this->getUser()->getId());
         $searchData = new SortieSearchData();
         $searchForm = $this->createForm(SortieFilterType::class, $searchData, [
@@ -103,7 +102,6 @@ final class SortieController extends AbstractController
         ]);
     }
 
-
     #[Route('/modify/{id}', name: 'sortie_modify', methods: ['GET', 'POST'])]
     public function modifySortie($id, Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository, SortieRepository $sortieRepository): Response
     {;
@@ -120,9 +118,6 @@ final class SortieController extends AbstractController
             return $this->redirectToRoute('sortie_list');
         } elseif ($sortie->getEtat()->getLibelle() != EtatEnum::EnCreation) {
             $this->addFlash('error', 'Vous ne pouvez modifier qu\'une sortie en cours de création (état actuel : ' .  $sortie->getEtat()->getLibelleString() . ')');
-            return $this->redirectToRoute('sortie_list');
-        } elseif (!$user->isAdministrateur()) {
-            $this->addFlash('error', 'Il faut être administrateur pour gérer une sortie');
             return $this->redirectToRoute('sortie_list');
         }
 
