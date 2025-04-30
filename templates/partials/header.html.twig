@@ -1,13 +1,13 @@
-<div class="flex justify-between shadow-xl sticky top-0">
+<div class="flex justify-between shadow-xl sticky top-0 bg-white z-999">
     <div class="flex items-center gap-4">
     <a href="{{path('app_home')}}">
     <img src="{{asset('img/logo.png')}}" width="150" height="150" alt="">
     </a>
-    <p class="font-bold">Sortir.com</p>
+    <p class="ml-4 font-bold text-2xl">Sortir<span class="text-[#fac108]">.com</span></p>
     </div>
     <div class="content-center p-4">
         <nav>
-            <ul class="flex gap-4 " >
+            <ul class="flex gap-8 mr-8" >
 
                 {% if app.user and app.user.administrateur %}
                 <li>
@@ -16,17 +16,17 @@
                 {% endif %}
                 {% if app.user  %}
                 <li>
-                    <a href="{{path('sortie_list')}}">Sorties</a>
+                    <a href="{{path('sortie_list')}}" class="text-black font-bold hover:text-[#fac108] transition  ">Sorties</a>
                 </li>
                 <li>
-                    <a href="{{path('app_profile')}}">Mon profil</a>
+                    <a href="{{path('app_profile')}}" class="text-black font-bold hover:text-[#fac108] transition ">Mon profil</a>
                 </li>
                 <li>
-                    <a href="{{path('app_logout')}}">Se déconnecter</a>
+                    <a href="{{path('app_logout')}}" class="text-black font-bold hover:text-[#fac108] transition ">Se déconnecter</a>
                 </li>
                 {% else %}
                 <li>
-                    <a href="{{path('app_login')}}">Connexion</a>
+                    <a href="{{path('app_login')}}" class="text-black font-bold hover:text-[#fac108] transition ">Connexion</a>
                 </li>
                 {% endif %}
             </ul>

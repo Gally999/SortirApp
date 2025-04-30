@@ -3,17 +3,9 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-<div class="mt-20 flex items-center justify-center">
-  <div class="max-w-sm w-full p-6 bg-white shadow-lg rounded-lg">
+<div class="flex items-center justify-center h-full ">
+  <div class="max-w-sm w-full p-6 bg-white shadow-lg rounded-lg border border-gray-200 hover:border hover:border-[#fac108]">
     <form method="post">
-
-      
-      {% if app.user %}
-        <div class="mb-4 text-green-600">
-          You are logged in as {{ app.user.userIdentifier }},
-          <a href="{{ path('app_logout') }}" class="text-blue-500 hover:underline">Logout</a>
-        </div>
-      {% endif %}
       
       <h1 class="text-2xl font-semibold text-center mb-6">Connexion</h1>
 
