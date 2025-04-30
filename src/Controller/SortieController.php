@@ -27,13 +27,16 @@ final class SortieController extends AbstractController
     ): Response
     {
         $searchData = new SortieSearchData();
-        $searchForm = $this->createForm(SortieFilterType::class, $searchData);
+        $searchForm = $this->createForm(SortieFilterType::class, $searchData, [
+            'user' => $this->getUser(),
+        ]);
         $searchForm->handleRequest($request);
+
+        $participant = $participantRepository->find($this->getUser()->getId());
+        // dd($participant, $this->getUser()->getId());
 
         if ($searchForm->isSubmitted() && $searchForm->isValid()) {
 
-            $participant = $participantRepository->find($this->getUser()->getId());
-            // dd($participant, $this->getUser()->getId());
             $sorties = $sortieRepository->findSortiesWithFilters(
                 $searchData->campus,
                 $participant,

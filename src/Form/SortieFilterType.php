@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Campus;
 use App\Entity\Sortie;
 use App\Model\SortieSearchData;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -17,11 +18,20 @@ class SortieFilterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $currentUser = $options['user'];
+
         $builder
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
                 'choice_label' => 'nom',
                 'label' => 'Campus',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('c')
+                    ->orderBy('c.nom', 'ASC');
+                },
+                'preferred_choices' => function (Campus $campus) use ($currentUser) {
+                    return $campus === $currentUser->getCampus();
+                },
             ])
             ->add('searchTerm', TextType::class, [
                 'label' => 'Le nom de la sortie contient',
@@ -62,6 +72,7 @@ class SortieFilterType extends AbstractType
         $resolver->setDefaults([
             'data_class' => SortieSearchData::class,
             'csrf_protection' => false,
+            'user' => null,
         ]);
     }
 }

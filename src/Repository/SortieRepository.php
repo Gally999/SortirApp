@@ -72,17 +72,23 @@ class SortieRepository extends ServiceEntityRepository
         $queryBuilder
             ->leftJoin('s.campus', 'c')->addSelect('c')
             ->leftJoin('s.etat', 'e')->addSelect('e')
+            ->join('s.organisateur', 'o')->addSelect('o')
             ->where('s.campus = :campus')
             ->setParameter('campus', $campus)
             ->addOrderBy('s.dateHeureDebut', 'ASC');
 
-        if (!$showTerminees) {
-            $queryBuilder
-                ->andWhere('e.libelle IN (:etats)')
-                ->setParameter('etats', EtatEnum::actives());
-        } else {
+        if ($showTerminees) {
             $queryBuilder->andWhere('e.libelle = :etatTerminee')
                 ->setParameter('etatTerminee', EtatEnum::Terminee);
+        } else {
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->orX(
+                'e.libelle IN (:etats)',
+                'e.libelle = :etatEnCreation AND s.organisateur = :user'
+            ))
+                ->setParameter('etats', EtatEnum::actives())
+                ->setParameter('etatEnCreation', EtatEnum::EnCreation)
+                ->setParameter('user', $user);
         }
 
         if ($searchTerm) {

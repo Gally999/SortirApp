@@ -4,65 +4,80 @@
 
 {% block body %}
 
-    <h2 class="font-light leading-snug tracking-tight text-slate-500 py-2 my-2 mx-auto w-full text-xl lg:max-w-2xl lg:text-4xl">Filtrer les sorties</h2>
-    <div class="flex flew-row items-center w-7/8 mx-auto">
-        <div class="flex items-center justify-start w-full">
-            {{ form_start(searchForm, {'attr': {'class': 'w-1/2 flex-start'}}) }}
-            <div class="flex flex-row m-3 justify-around">
-                <p class="px-2">{{ form_label(searchForm.campus) }}</p>
-                {{ form_widget(searchForm.campus, {'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
-                {% if searchForm.campus.vars.errors|length > 0 %}
-                    <p class="text-red-500 text-sm mt-2">
-                        {% for error in searchForm.campus.vars.errors %}
-                            <span>{{ error.message }}</span><br>
-                        {% endfor %}
-                    </p>
-                {% endif %}
+<div class="w-4/5 mx-auto">
+    <h2 class="font-light leading-snug tracking-tight text-slate-500 py-2 my-2 mx-auto w-full text-center text-xl lg:max-w-2xl lg:text-4xl">Filtrer les sorties</h2>
+    <div class="flex flex-row flex-wrap items-center justify-between w-full p-4">
+        <div class="flex items-center justify-start">
+            {{ form_start(searchForm, {'attr': {'class': 'flex-start'}}) }}
+            <div class="flex flex-row m-3 justify-between">
+                <p class="content-center my-auto min-w-40">{{ form_label(searchForm.campus) }}</p>
+                {{ form_widget(searchForm.campus, {'attr': {'class': 'form-input mt-1 p-2 block w-3/4 rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
             </div>
-            <div class="flex flex-row m-3 items-start justify-between">
-                <p class="px-2 content-center my-auto">{{ form_label(searchForm.searchTerm) }}</p>
-                {{ form_widget(searchForm.searchTerm, {'attr': {'class': 'form-input p-1 mt-1 block w-1/3 rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
-                {% if searchForm.searchTerm.vars.errors|length > 0 %}
-                    <p class="text-red-500 text-sm mt-2">
-                        {% for error in searchForm.searchTerm.vars.errors %}
-                            <span>{{ error.message }}</span><br>
-                        {% endfor %}
-                    </p>
-                {% endif %}
+            <div class="flex flex-col m-3">
+                <div class="flex flex-row items-start justify-between">
+                    <p class="content-center my-auto min-w-40">{{ form_label(searchForm.searchTerm) }}</p>
+                    {{ form_widget(searchForm.searchTerm, {'attr': {'class': 'form-input block w-3/4 p-2 rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50 my-auto'}}) }}
+                </div>
+                    {% if searchForm.searchTerm.vars.errors|length > 0 %}
+                        <p class="text-red-500 text-sm mt-1 text-center">
+                            {% for error in searchForm.searchTerm.vars.errors %}
+                                <span>{{ error.message }}</span><br>
+                            {% endfor %}
+                        </p>
+                    {% endif %}
             </div>
-            <div class="flex flex-row justify-between w-1/2 m-3">
-                <div class="flex flex-row">
-                    <p class="px-2">{{ form_label(searchForm.startDate) }}</p>
-                    {{ form_widget(searchForm.startDate, {'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                <div class="flex flex-col m-3">
+                    <div class="flex flex-row">
+                        <p class="content-center my-auto min-w-40">{{ form_label(searchForm.startDate) }}</p>
+                        {{ form_widget(searchForm.startDate, {'attr': {'class': 'form-input mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                    </div>
                     {% if searchForm.startDate.vars.errors|length > 0 %}
-                        <p class="text-red-500 text-sm mt-2">
+                        <p class="text-red-500 text-sm mt-2 text-center">
                             {% for error in searchForm.startDate.vars.errors %}
                                 <span>{{ error.message }}</span><br>
                             {% endfor %}
                         </p>
                     {% endif %}
                 </div>
-                <div class="flex flex-row">
-                    <p class="px-2">{{ form_label(searchForm.endDate) }}</p>
-                    {{ form_widget(searchForm.endDate, {'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                <div class="flex flex-col m-3">
+                    <div class="flex flex-row">
+                        <p class="content-center my-auto min-w-40">{{ form_label(searchForm.endDate) }}</p>
+                        {{ form_widget(searchForm.endDate, {'attr': {'class': 'form-input mt-1 block p-2 w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                    </div>
                     {% if searchForm.endDate.vars.errors|length > 0 %}
-                        <p class="text-red-500 text-sm mt-2">
+                        <p class="text-red-500 text-sm mt-2 text-center">
                             {% for error in searchForm.endDate.vars.errors %}
                                 <span>{{ error.message }}</span><br>
                             {% endfor %}
                         </p>
                     {% endif %}
                 </div>
+        </div>
+
+        <div class="flex flex-col items-start">
+            <div class="flex flex-row m-3 justify-around">
+                {{ form_widget(searchForm.isOrganisateur) }}
+                <p class="ml-2">{{ form_label(searchForm.isOrganisateur) }}</p>
+            </div>
+            <div class="flex flex-row m-3 justify-around">
+                {{ form_widget(searchForm.isInscrit) }}
+                <p class="ml-2">{{ form_label(searchForm.isInscrit) }}</p>
+            </div>
+            <div class="flex flex-row m-3 justify-around">
+                {{ form_widget(searchForm.isNotInscrit)}}
+                <p class="ml-2">{{ form_label(searchForm.isNotInscrit) }}</p>
+            </div>
+            <div class="flex flex-row m-3 justify-around">
+                {{ form_widget(searchForm.showTerminees) }}
+                <p class="ml-2">{{ form_label(searchForm.showTerminees) }}</p>
             </div>
         </div>
-        <button class="mr-4 h-fit w-1/4 bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none">Rechercher</button>
+        <button class="h-fit w-1/5 bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none">Rechercher</button>
         {{ form_end(searchForm) }}
-
     </div>
+</div>
 
-
-
-    <h1 class="font-light leading-snug tracking-tight text-slate-800 mx-auto my-6 w-full text-2xl lg:max-w-3xl lg:text-5xl">Liste des sorties</h1>
+    <h1 class="font-light leading-snug tracking-tight text-slate-800 mx-auto my-6 w-full text-center text-2xl lg:max-w-3xl lg:text-5xl">Liste des sorties</h1>
     {% if sorties is not empty  %}
     <div class="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border px-4">
         <table class="w-full text-left table-auto min-w-max text-slate-800">
@@ -87,7 +102,7 @@
                         <td class="p-4"><p class="text-sm font-bold">{{ s.participants | length }} / {{ s.nbInscriptionMax }}</p></td>
                         <td class="p-4"><p class="text-sm font-bold">{{ s.etat.libelle.value }}</p></td>
                         <td class="p-4"><p class="text-sm font-bold text-center">{{ currentUser in s.participants ? 'X' : '' }}</p></td>
-                        <td class="p-4"><p class="text-sm font-bold">{{ s.organisateur.prenom }} {{ s.organisateur.nom }}</p></td>
+                        <td class="p-4"><p class="text-sm font-bold pb-1 hover:underline hover:text-[#fac108] transition"><a href="{{ path('app_profile_show', { pseudo: s.organisateur.pseudo }) }}">{{ s.organisateur.prenom }} {{ s.organisateur.nom }}</a></p></td>
                         <td class="p-4"><p class="text-sm font-bold">
                             <div class="block text-center">
                                 <button class="text-slate-600 hover:text-slate-800">
@@ -108,8 +123,6 @@
                 {% endfor %}
             </tbody>
         </table>
-
-        <p>Mon id = {{ app.user.id }}</p>
     {% else %}
         <p>Pas encore de sortie, ajoutez la vôtre ! + ajouter bouton</p>
 
