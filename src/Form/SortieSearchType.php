@@ -21,15 +21,18 @@ class SortieSearchType extends AbstractType
                 'label' => 'Campus',
             ])
             ->add('search', TextType::class, [
-                'label' => 'Le nom de la sortie contient'
+                'label' => 'Le nom de la sortie contient',
+                 'required' => false,
             ])
             ->add('dateDebut', DateType::class, [
                 'label' => 'Entre',
                 'widget' => 'single_text',
+                'required' => false,
             ])
             ->add('dateFin', DateType::class, [
                 'label' => 'et',
                 'widget' => 'single_text',
+                'required' => false,
             ])
             ->setMethod('GET')
         ;

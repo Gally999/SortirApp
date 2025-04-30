@@ -2,12 +2,10 @@
 
 namespace App\Controller;
 
-use App\Form\SortieSearchType;
-use App\Entity\Sortie;
 use App\Enum\EtatEnum;
-use App\Form\SortieType;
-use App\Entity\Participant;
+use App\Form\SortieSearchType;
 use App\Repository\EtatRepository;
+use App\Entity\Participant;
 use App\Repository\CampusRepository;
 use App\Repository\SortieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,6 +20,7 @@ final class SortieController extends AbstractController
     #[Route('/', name: 'sortie_list', methods: ['GET', 'POST'])]
     public function list(
         SortieRepository $sortieRepository,
+        EtatRepository $etatRepository,
         Request $request,
     ): Response
     {
@@ -32,7 +31,14 @@ final class SortieController extends AbstractController
 
         if ($searchForm->isSubmitted() && $searchForm->isValid()) {
             $data = $searchForm->getData();
-            dd($data);
+            //dd($data);
+
+            $sorties = $sortieRepository->findSortiesActivesWithParams(
+                $data['campus'],
+                $data['search'],
+                $data['dateDebut'],
+                $data['dateFin'],
+            );
         } else {
             // Sorties par défaut - état = actif
             $sorties = $sortieRepository->findSortiesActives();

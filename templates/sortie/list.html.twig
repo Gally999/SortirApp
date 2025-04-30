@@ -4,12 +4,12 @@
 
 {% block body %}
 
-    <h2 class="font-light leading-snug tracking-tight text-slate-500 mx-auto my-6 w-full text-xl lg:max-w-2xl lg:text-4xl">Filtrer les sorties</h2>
-    <div class="flex flew-row items-center">
-        <div class="mt-10 flex items-center justify-center w-full">
-            {{ form_start(searchForm, {'attr': {'class': 'w-5/6'}}) }}
+    <h2 class="font-light leading-snug tracking-tight text-slate-500 py-2 my-2 mx-auto w-full text-xl lg:max-w-2xl lg:text-4xl">Filtrer les sorties</h2>
+    <div class="flex flew-row items-center w-7/8 mx-auto">
+        <div class="flex items-center justify-start w-full">
+            {{ form_start(searchForm, {'attr': {'class': 'w-1/2 flex-start'}}) }}
             <div class="flex flex-row m-3 justify-around">
-                {{ form_label(searchForm.campus) }}
+                <p class="px-2">{{ form_label(searchForm.campus) }}</p>
                 {{ form_widget(searchForm.campus, {'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
                 {% if searchForm.campus.vars.errors|length > 0 %}
                     <p class="text-red-500 text-sm mt-2">
@@ -19,9 +19,9 @@
                     </p>
                 {% endif %}
             </div>
-            <div class="flex flex-row m-3 p-3 items-start justify-between">
-                <p class="px-2">{{ form_label(searchForm.search) }}</p>
-                {{ form_widget(searchForm.search, {'attr': {'class': 'form-input mt-1 block w-1/3 rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+            <div class="flex flex-row m-3 items-start justify-between">
+                <p class="px-2 content-center my-auto">{{ form_label(searchForm.search) }}</p>
+                {{ form_widget(searchForm.search, {'attr': {'class': 'form-input p-1 mt-1 block w-1/3 rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
                 {% if searchForm.search.vars.errors|length > 0 %}
                     <p class="text-red-500 text-sm mt-2">
                         {% for error in searchForm.search.vars.errors %}
@@ -30,8 +30,8 @@
                     </p>
                 {% endif %}
             </div>
-            <div class="flex flex-row justify-between w-1/2">
-                <div class="flex flex-row m-3">
+            <div class="flex flex-row justify-between w-1/2 m-3">
+                <div class="flex flex-row">
                     <p class="px-2">{{ form_label(searchForm.dateDebut) }}</p>
                     {{ form_widget(searchForm.dateDebut, {'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
                     {% if searchForm.dateDebut.vars.errors|length > 0 %}
@@ -42,7 +42,7 @@
                         </p>
                     {% endif %}
                 </div>
-                <div class="flex flex-row m-3">
+                <div class="flex flex-row">
                     <p class="px-2">{{ form_label(searchForm.dateFin) }}</p>
                     {{ form_widget(searchForm.dateFin, {'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
                     {% if searchForm.dateFin.vars.errors|length > 0 %}
@@ -63,6 +63,7 @@
 
 
     <h1 class="font-light leading-snug tracking-tight text-slate-800 mx-auto my-6 w-full text-2xl lg:max-w-3xl lg:text-5xl">Liste des sorties</h1>
+    {% if sorties is not empty  %}
     <div class="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border px-4">
         <table class="w-full text-left table-auto min-w-max text-slate-800">
             <thead>
@@ -107,6 +108,10 @@
                 {% endfor %}
             </tbody>
         </table>
+    {% else %}
+        <p>Pas encore de sortie, ajoutez la vôtre ! + ajouter bouton</p>
+
+    {% endif %}
     </div>
 
 <div class="mt-4 px-4">

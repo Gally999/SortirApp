@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Campus;
 use App\Entity\Sortie;
 use App\Enum\EtatEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -41,7 +42,7 @@ class SortieRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-    public function findSortiesActives()
+    public function findSortiesActives(): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder
@@ -52,5 +53,44 @@ class SortieRepository extends ServiceEntityRepository
             ->addOrderBy('s.dateHeureDebut', 'ASC');
         $query = $queryBuilder->getQuery();
         return $query->getResult();
+    }
+
+    public function findSortiesActivesWithParams(
+        Campus $campus,
+        ?string $searchTerm = null,
+        ?\DateTime $startDate = null,
+        ?\DateTime $endDate = null
+    ): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder
+            ->leftJoin('s.campus', 'c')
+            ->addSelect('c')
+            ->where('s.campus = :campus')
+            ->leftJoin('s.etat', 'e')
+            ->addSelect('e')
+            ->andWhere('e.libelle IN (:etats)')
+            ->setParameter('campus', $campus)
+            ->setParameter('etats', EtatEnum::actives())
+            ->addOrderBy('s.dateHeureDebut', 'ASC');
+
+        if ($searchTerm) {
+            $queryBuilder->andWhere('s.nom LIKE :search')
+                ->setParameter('search', '%' . $searchTerm . '%');
+        }
+
+        if ($startDate) {
+            $queryBuilder
+                ->andWhere('s.dateHeureDebut >= :startDate')
+                ->setParameter('startDate', $startDate);
+        }
+
+        if ($endDate) {
+            $queryBuilder
+                ->andWhere('s.dateHeureDebut <= :endDate')
+                ->setParameter('endDate', $endDate);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }
