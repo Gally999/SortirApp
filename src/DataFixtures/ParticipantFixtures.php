@@ -41,22 +41,22 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($admin);
 
         for ($i = 0; $i < 10; $i++) {
-            $participant = new Participant();
-            $participant->setNom($faker->firstName());
-            $participant->setPrenom($faker->lastName());
-            $participant->setEmail("user$i@test.com");
-            $participant->setPseudo("user$i");
-            $participant->setCampus($this->getReference('campus' . $faker->numberBetween(0, 4), Campus::class));
+            $user = new Participant();
+            $user->setNom($faker->lastName());
+            $user->setPrenom($faker->firstName());
+            $user->setEmail("user$i@test.com");
+            $user->setPseudo("user$i");
+            $user->setCampus($this->getReference('campus' . $faker->numberBetween(0, 4), Campus::class));
 
-            $hashedPassword = $this->passwordHasher->hashPassword($participant, '123456');
-            $participant->setPassword($hashedPassword);
+            $hashedPassword = $this->passwordHasher->hashPassword($user, '123456');
+            $user->setPassword($hashedPassword);
 
-            $participant->setRoles(['ROLE_USER']);
-            $participant->setAdministrateur(false);
-            $participant->setActif(true);
+            $user->setRoles(['ROLE_USER']);
+            $user->setAdministrateur(false);
+            $user->setActif(true);
 
-            $manager->persist($participant);
-            $this->addReference('participant' . $i, $participant);
+            $manager->persist($user);
+            $this->addReference('user' . $i, $user);
         }
 
         $manager->flush();
