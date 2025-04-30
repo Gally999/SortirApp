@@ -1,36 +1,37 @@
 <div class="flex justify-between shadow-xl sticky top-0 bg-white z-999">
-    <div class="flex items-center gap-4">
-    <a href="{{path('app_home')}}">
-    <img src="{{asset('img/logo.png')}}" width="150" height="150" alt="">
-    </a>
-    <p class="ml-4 font-bold text-2xl">Sortir<span class="text-[#fac108]">.com</span></p>
-    </div>
-    <div class="content-center p-4">
-        <nav>
-            <ul class="flex gap-8 mr-8" >
+	<div class="flex items-center gap-4">
+		<a href="{{path('app_home')}}">
+			<img src="{{asset('img/logo.png')}}" width="150" height="150" alt="">
+		</a>
+		<p class="ml-4 font-bold text-2xl">Sortir<span class="text-[#fac108]">.com</span>
+		</p>
+	</div>
+	<div class="content-center p-4">
+		<nav>
+			<ul class="flex gap-8 mr-8">
 
-                {% if app.user and app.user.administrateur %}
-                <li>
-                    <a href="">Administration</a>
-                </li>
-                {% endif %}
-                {% if app.user  %}
-                <li>
-                    <a href="{{path('sortie_list')}}" class="text-black font-bold hover:text-[#fac108] transition  ">Sorties</a>
-                </li>
-                <li>
-                    <a href="{{path('app_profile')}}" class="text-black font-bold hover:text-[#fac108] transition ">Mon profil</a>
-                </li>
-                <li>
-                    <a href="{{path('app_logout')}}" class="text-black font-bold hover:text-[#fac108] transition ">Se déconnecter</a>
-                </li>
-                {% else %}
-                <li>
-                    <a href="{{path('app_login')}}" class="text-black font-bold hover:text-[#fac108] transition ">Connexion</a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
-    </div>
+				{% if app.user and app.user.administrateur %}
+					<li>
+						<a href="{{path('admin_index')}}" class="text-black font-bold hover:text-[#fac108] transition  ">Administration</a>
+					</li>
+				{% endif %}
+				{% if app.user  %}
+					<li>
+						<a href="{{path('sortie_list')}}" class="text-black font-bold hover:text-[#fac108] transition  ">Sorties</a>
+					</li>
+					<li>
+						<a href="{{path('app_profile')}}" class="text-black font-bold hover:text-[#fac108] transition ">Mon profil</a>
+					</li>
+					<li>
+						<a href="{{path('app_logout')}}" class="text-black font-bold hover:text-[#fac108] transition ">Se déconnecter</a>
+					</li>
+				{% else %}
+					<li>
+						<a href="{{path('app_login')}}" class="text-black font-bold hover:text-[#fac108] transition ">Connexion</a>
+					</li>
+				{% endif %}
+			</ul>
+		</nav>
+	</div>
 </div>
 {{ include('partials/_flash.html.twig') }}

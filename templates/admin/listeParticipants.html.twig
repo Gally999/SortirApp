@@ -1,0 +1,115 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<!-- DataTables CSS -->
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
+{% endblock %}
+
+{% block body %}
+	<div class="container mx-auto mt-10 px-4">
+		<h1 class="text-3xl font-bold mb-6 text-center">Liste des participants</h1>
+
+		<select name="campus" id="campusEl" class="block w-max mb-4 max-w-xs rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 shadow-sm focus:border-[#fac108] focus:ring focus:ring-[#fac108]/50">
+			<option value="all">Tous les campus</option>
+			{% for campus in campuses %}
+				<option value="{{ campus.getNom() }}">{{ campus.nom }}</option>
+			{% endfor %}
+		</select>
+
+		<label for="activeEl">Afficher uniquement les participants actifs</label>
+		<input type="checkbox" id="activeEl" class="mb-4">
+
+		<div class="overflow-x-auto rounded-lg">
+			<table id="participants-table" class="min-w-full divide-y divide-gray-200 bg-white display">
+				<thead class="bg-[#fac108] text-black">
+					<tr>
+						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">ID</th>
+						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Pseudo</th>
+						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Nom</th>
+						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Prénom</th>
+						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Email</th>
+						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Téléphone</th>
+						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Campus</th>
+						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Actif</th>
+						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Admin</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-gray-200">
+					{% for participant in participants %}
+						<tr class="hover:bg-gray-50">
+							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.id }}</td>
+							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.pseudo }}</td>
+							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.nom }}</td>
+							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.prenom }}</td>
+							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.email }}</td>
+							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.telephone ?? '-' }}</td>
+							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.campus.nom }}</td>
+							<td class="px-6 py-4 text-sm">
+								<span class="inline-block px-2 py-1 text-xs rounded-full {{ participant.actif ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800' }}">
+									{{ participant.actif ? 'Oui' : 'Non' }}
+								</span>
+							</td>
+							<td class="px-6 py-4 text-sm">
+								<span class="inline-block px-2 py-1 text-xs rounded-full {{ participant.administrateur ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800' }}">
+									{{ participant.administrateur ? 'Oui' : 'Non' }}
+								</span>
+							</td>
+						</tr>
+					{% else %}
+						<tr>
+							<td colspan="9" class="px-6 py-4 text-center text-sm text-gray-500">Aucun participant trouvé.</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<!-- DataTables JS -->
+	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	<script>
+		$(document).ready(function () {
+const table = $("#participants-table").DataTable({
+order: [
+[1, "asc"]
+]
+});
+
+
+const campusEl = document.querySelector("#campusEl");
+const activeEl = document.querySelector("#activeEl");
+
+
+// Ajout d'une fonction de filtre personnalisé
+$.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+let campusChoice = campusEl.value;
+let activeChoice = activeEl.checked;
+
+if (activeChoice && data[7].trim() === "Non") {
+return false;
+}
+if (campusChoice === "all") {
+return true;
+} else {
+return data[6] === campusChoice;
+}
+
+
+});
+
+activeEl.addEventListener("change", function () {
+table.draw();
+})
+
+campusEl.addEventListener("input", function () {
+table.draw();
+});
+});
+	</script>
+{% endblock %}
