@@ -2,32 +2,61 @@
 
 namespace App\Controller;
 
-use App\Entity\Etat;
-use App\Entity\Campus;
 use App\Entity\Sortie;
-use App\Enum\EtatEnum;
 use App\Form\SortieType;
-use App\Entity\Participant;
+use App\Repository\ParticipantRepository;
+use App\Enum\EtatEnum;
+use App\Form\SortieFilterType;
+use App\Model\SortieSearchData;
 use App\Repository\EtatRepository;
+use App\Entity\Participant;
 use App\Repository\CampusRepository;
 use App\Repository\SortieRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/sorties')]
 final class SortieController extends AbstractController
 {
-    #[Route('/', name: 'sortie_list', methods: ['GET', 'POST'])]
-    public function list(SortieRepository $sortieRepository): Response
+    #[Route('/', name: 'sortie_list', methods: ['GET'])]
+    public function list(
+        SortieRepository $sortieRepository,
+        ParticipantRepository $participantRepository,
+        Request $request,
+    ): Response
     {
+        $participant = $participantRepository->find($this->getUser()->getId());
+        $searchData = new SortieSearchData();
+        $searchForm = $this->createForm(SortieFilterType::class, $searchData, [
+            'user' => $participant,
+        ]);
+        $searchForm->handleRequest($request);
 
-        // $sorties = $sortieRepository->findBy(['etat.libelle' => ['En creation', 'Ouverte', 'Cloturee', 'En cours', 'Terminée']], ['dateHeureDebut' => 'DESC']);
-        $sorties = $sortieRepository->findSortiesActives();
+        if ($searchForm->isSubmitted() && $searchForm->isValid()) {
+
+            $sorties = $sortieRepository->findSortiesWithFilters(
+                $searchData->campus,
+                $participant,
+                $searchData->searchTerm,
+                $searchData->startDate,
+                $searchData->endDate,
+                $searchData->isOrganisateur,
+                $searchData->isInscrit,
+                $searchData->isNotInscrit,
+                $searchData->showTerminees
+            );
+        } else {
+            // Sorties par défaut - état = actif
+            $sorties = $sortieRepository->findSortiesActives();
+        }
+
         return $this->render('sortie/list.html.twig', [
             'sorties' => $sorties,
+            'searchForm' => $searchForm,
+            'currentUser' => $participant,
         ]);
     }
 

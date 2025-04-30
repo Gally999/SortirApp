@@ -31,11 +31,15 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $sortie->setDateLimiteInscription(\DateTimeImmutable::createFromMutable($dateLimiteInscription));
 
             $sortie->setNbInscriptionMax($faker->numberBetween(2, 20));
-            $sortie->setEtat($this->getReference('etat' . $faker->numberBetween(0, 5), Etat::class));
+            $sortie->setEtat($this->getReference('etat' . $faker->numberBetween(0, 6), Etat::class));
 
             $sortie->setLieu($this->getReference('lieu' . $faker->numberBetween(0, 19), Lieu::class));
-            $sortie->setOrganisateur($this->getReference('admin', Participant::class));
+            $sortie->setOrganisateur($this->getReference('user' . $faker->numberBetween(0, 9), Participant::class));
             $sortie->setInfosSortie($faker->paragraph($nbSentences = 2, $variableNbSentences = true));
+
+            for ($j = 0; $j < 3; $j++) {
+                $sortie->addParticipant($this->getReference('user' . $faker->numberBetween(0, 9), Participant::class));
+            }
 
             $manager->persist($sortie);
         }

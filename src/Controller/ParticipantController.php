@@ -20,7 +20,6 @@ class ParticipantController extends AbstractController
     {
         $participant = $repo->find($this->getUser()->getId());
 
-
         $form = $this->createForm(ParticipantType::class, $participant);
         $form->handleRequest($request);
 
