@@ -2,20 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\Campus;
+use App\Entity\Participant;
 use App\Entity\Sortie;
-use App\Form\SortieType;
-use App\Repository\ParticipantRepository;
 use App\Enum\EtatEnum;
 use App\Form\SortieFilterType;
+use App\Form\SortieType;
 use App\Model\SortieSearchData;
-use App\Repository\EtatRepository;
-use App\Entity\Participant;
 use App\Repository\CampusRepository;
+use App\Repository\EtatRepository;
+use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -60,11 +59,20 @@ final class SortieController extends AbstractController
         ]);
     }
 
+    #[Route(path: '/{id}', name: 'sortie_details', requirements: ['id'=>'\d+'], methods: ['GET'])]
+    public function details(Sortie $sortie, ParticipantRepository $participantRepo): Response
+    {
+        $currentUser = $participantRepo->find($this->getUser()->getId());
+        return $this->render('sortie/details.html.twig', [
+            "sortie" => $sortie,
+            "currentUser" => $currentUser,
+        ]);
+    }
+
     #[Route('/creer', name: 'sortie_create', methods: ['GET', 'POST'])]
     public function create(Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository, CampusRepository $campusRepository): Response
     {
         // dd($this->getUser()->getCampus());
-
 
         $sortie = new Sortie();
         $form = $this->createForm(SortieType::class, $sortie);
@@ -144,7 +152,6 @@ final class SortieController extends AbstractController
 
             $entityManager->persist($sortie);
             $entityManager->flush();
-
 
             $this->addFlash('success', 'Sortie mise à jour avec succès (État : ' . $etat->getLibelleString() . ')');
             return $this->redirectToRoute('app_profile');

@@ -4,9 +4,9 @@ namespace App\DataFixtures;
 
 use App\Entity\Campus;
 use App\Entity\Participant;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class ParticipantFixtures extends Fixture implements DependentFixtureInterface

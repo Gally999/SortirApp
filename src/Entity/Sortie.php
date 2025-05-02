@@ -2,16 +2,13 @@
 
 namespace App\Entity;
 
-
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\SortieRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Callback;
-
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[UniqueEntity(fields: ['nom', 'dateHeureDebut', 'lieu'], message: 'Cette sortie existe déjà.')]
 #[ORM\Entity(repositoryClass: SortieRepository::class)]

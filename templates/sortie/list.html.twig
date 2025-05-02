@@ -4,134 +4,141 @@
 
 {% block body %}
 
-<div class="w-4/5 mx-auto">
-    <h2 class="font-light leading-snug tracking-tight text-slate-500 py-2 my-2 mx-auto w-full text-center text-xl lg:max-w-2xl lg:text-4xl">Filtrer les sorties</h2>
-    <div class="flex flex-row flex-wrap items-center justify-between w-full p-4">
-        <div class="flex items-center justify-start">
-            {{ form_start(searchForm, {'attr': {'class': 'flex-start'}}) }}
-            <div class="flex flex-row m-3 justify-between">
-                <p class="content-center my-auto min-w-40">{{ form_label(searchForm.campus) }}</p>
-                {{ form_widget(searchForm.campus, {'attr': {'class': 'form-input mt-1 p-2 block w-3/4 rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
-            </div>
-            <div class="flex flex-col m-3">
-                <div class="flex flex-row items-start justify-between">
-                    <p class="content-center my-auto min-w-40">{{ form_label(searchForm.searchTerm) }}</p>
-                    {{ form_widget(searchForm.searchTerm, {'attr': {'class': 'form-input block w-3/4 p-2 rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50 my-auto'}}) }}
-                </div>
-                    {% if searchForm.searchTerm.vars.errors|length > 0 %}
-                        <p class="text-red-500 text-sm mt-1 text-center">
-                            {% for error in searchForm.searchTerm.vars.errors %}
-                                <span>{{ error.message }}</span><br>
-                            {% endfor %}
-                        </p>
-                    {% endif %}
-            </div>
-                <div class="flex flex-col m-3">
-                    <div class="flex flex-row">
-                        <p class="content-center my-auto min-w-40">{{ form_label(searchForm.startDate) }}</p>
-                        {{ form_widget(searchForm.startDate, {'attr': {'class': 'form-input mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
-                    </div>
-                    {% if searchForm.startDate.vars.errors|length > 0 %}
-                        <p class="text-red-500 text-sm mt-2 text-center">
-                            {% for error in searchForm.startDate.vars.errors %}
-                                <span>{{ error.message }}</span><br>
-                            {% endfor %}
-                        </p>
-                    {% endif %}
+    <section class="list-sortie-filters w-4/5 mx-auto">
+        <h2>Filtrer les sorties</h2>
+        <div class="flex flex-row flex-wrap items-center justify-between w-full p-4">
+            <div class="flex items-center justify-start">
+                {{ form_start(searchForm, {'attr': {'class': 'flex-start'}}) }}
+                <div class="flex flex-row m-3 justify-between">
+                    <p class="content-center my-auto min-w-40">{{ form_label(searchForm.campus) }}</p>
+                    {{ form_widget(searchForm.campus, {'attr': {'class': 'form-input mt-1 p-2 block w-3/4 rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
                 </div>
                 <div class="flex flex-col m-3">
-                    <div class="flex flex-row">
-                        <p class="content-center my-auto min-w-40">{{ form_label(searchForm.endDate) }}</p>
-                        {{ form_widget(searchForm.endDate, {'attr': {'class': 'form-input mt-1 block p-2 w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                    <div class="flex flex-row items-start justify-between">
+                        <p class="content-center my-auto min-w-40">{{ form_label(searchForm.searchTerm) }}</p>
+                        {{ form_widget(searchForm.searchTerm, {'attr': {'class': 'form-input block w-3/4 p-2 rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50 my-auto'}}) }}
                     </div>
-                    {% if searchForm.endDate.vars.errors|length > 0 %}
-                        <p class="text-red-500 text-sm mt-2 text-center">
-                            {% for error in searchForm.endDate.vars.errors %}
-                                <span>{{ error.message }}</span><br>
-                            {% endfor %}
-                        </p>
-                    {% endif %}
+                        {% if searchForm.searchTerm.vars.errors|length > 0 %}
+                            <p class="text-red-500 text-sm mt-1 text-center">
+                                {% for error in searchForm.searchTerm.vars.errors %}
+                                    <span>{{ error.message }}</span><br>
+                                {% endfor %}
+                            </p>
+                        {% endif %}
                 </div>
+                    <div class="flex flex-col m-3">
+                        <div class="flex flex-row">
+                            <p class="content-center my-auto min-w-40">{{ form_label(searchForm.startDate) }}</p>
+                            {{ form_widget(searchForm.startDate, {'attr': {'class': 'form-input mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                        </div>
+                        {% if searchForm.startDate.vars.errors|length > 0 %}
+                            <p class="text-red-500 text-sm mt-2 text-center">
+                                {% for error in searchForm.startDate.vars.errors %}
+                                    <span>{{ error.message }}</span><br>
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+                    </div>
+                    <div class="flex flex-col m-3">
+                        <div class="flex flex-row">
+                            <p class="content-center my-auto min-w-40">{{ form_label(searchForm.endDate) }}</p>
+                            {{ form_widget(searchForm.endDate, {'attr': {'class': 'form-input mt-1 block p-2 w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
+                        </div>
+                        {% if searchForm.endDate.vars.errors|length > 0 %}
+                            <p class="text-red-500 text-sm mt-2 text-center">
+                                {% for error in searchForm.endDate.vars.errors %}
+                                    <span>{{ error.message }}</span><br>
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+                    </div>
+            </div>
+
+            <div class="flex flex-col items-start">
+                <div class="flex flex-row m-3 justify-around">
+                    {{ form_widget(searchForm.isOrganisateur, {'attr': {'style': 'accent-color: gold;'}}) }}
+                    <p class="ml-2 ">{{ form_label(searchForm.isOrganisateur) }}</p>
+                </div>
+                <div class="flex flex-row m-3 justify-around">
+                    {{ form_widget(searchForm.isInscrit, {'attr': {'style': 'accent-color: gold;'}}) }}
+                    <p class="ml-2">{{ form_label(searchForm.isInscrit) }}</p>
+                </div>
+                <div class="flex flex-row m-3 justify-around">
+                    {{ form_widget(searchForm.isNotInscrit, {'attr': {'style': 'accent-color: gold;'}}) }}
+                    <p class="ml-2">{{ form_label(searchForm.isNotInscrit) }}</p>
+                </div>
+                <div class="flex flex-row m-3 justify-around">
+                    {{ form_widget(searchForm.showTerminees, {'attr': {'style': 'accent-color: gold;'}}) }}
+                    <p class="ml-2">{{ form_label(searchForm.showTerminees) }}</p>
+                </div>
+            </div>
+            <button class="h-fit w-1/5 bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none">Rechercher</button>
+            {{ form_end(searchForm) }}
         </div>
+    </section>
 
-        <div class="flex flex-col items-start">
-            <div class="flex flex-row m-3 justify-around">
-                {{ form_widget(searchForm.isOrganisateur) }}
-                <p class="ml-2">{{ form_label(searchForm.isOrganisateur) }}</p>
-            </div>
-            <div class="flex flex-row m-3 justify-around">
-                {{ form_widget(searchForm.isInscrit) }}
-                <p class="ml-2">{{ form_label(searchForm.isInscrit) }}</p>
-            </div>
-            <div class="flex flex-row m-3 justify-around">
-                {{ form_widget(searchForm.isNotInscrit)}}
-                <p class="ml-2">{{ form_label(searchForm.isNotInscrit) }}</p>
-            </div>
-            <div class="flex flex-row m-3 justify-around">
-                {{ form_widget(searchForm.showTerminees) }}
-                <p class="ml-2">{{ form_label(searchForm.showTerminees) }}</p>
-            </div>
+    <section class="list-sorties-container my-10">
+        <h1 class="font-light leading-snug tracking-tight text-slate-800 mx-auto my-6 w-full text-center text-2xl lg:max-w-3xl lg:text-5xl">Liste des sorties</h1>
+        <div class="relative flex flex-col w-full h-full overflow-visible text-gray-700 bg-white shadow-md rounded-lg bg-clip-border px-4">
+            {% if sorties is not empty  %}
+                <table class="w-full text-left table-auto min-w-max text-slate-800">
+                    <thead>
+                        <tr class="text-slate-500 border-b border-slate-300 bg-slate-50">
+                            <th class="p-4"><p class="text-sm leading-none font-normal">Nom de la sortie</p></th>
+                            <th class="p-4"><p class="text-sm leading-none font-normal">Date de la sortie</p></th>
+                            <th class="p-4"><p class="text-sm leading-none font-normal">Clôture</p></th>
+                            <th class="p-4"><p class="text-sm leading-none font-normal">Inscrits/Places</p></th>
+                            <th class="p-4"><p class="text-sm leading-none font-normal">Etat</p></th>
+                            <th class="p-4"><p class="text-sm leading-none font-normal">Inscrit</p></th>
+                            <th class="p-4"><p class="text-sm leading-none font-normal">Organisateur</p></th>
+                            <th class="p-4"><p class="text-sm leading-none font-normal">Actions</p></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in sorties %}
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-4"><p class="text-sm font-bold hover:underline hover:text-[#fac108] transition"><a href="{{ path('sortie_details', { id: s.id }) }}">{{ s.nom }}</a></p></td>
+                                <td class="p-4"><p class="text-sm font-bold">{{ s.dateHeureDebut | date('d/m/Y H:i') }}</p></td>
+                                <td class="p-4"><p class="text-sm font-bold">{{ s.dateLimiteInscription | date('d/m/Y') }}</p></td>
+                                <td class="p-4"><p class="text-sm font-bold">{{ s.participants | length }} / {{ s.nbInscriptionMax }}</p></td>
+                                <td class="p-4"><p class="text-sm font-bold">{{ s.etat.libelle.value }}</p></td>
+                                <td class="p-4"><p class="text-sm font-bold text-center">{{ currentUser in s.participants ? '<i class="fa-solid fa-check"></i>' : '' }}</p></td>
+                                <td class="p-4"><p class="text-sm font-bold pb-1 hover:underline hover:text-[#fac108] transition"><a href="{{ path('app_profile_show', { pseudo: s.organisateur.pseudo }) }}">{{ s.organisateur.prenom }} {{ s.organisateur.nom }}</a></p></td>
+                                <td class="p-4"><p class="text-sm font-bold">
+                                    <div class="flex flex-row justify-around text-center w-2/3">
+                                        {% if currentUser in s.participants %}
+                                            <button class="text-slate-600 hover:text-slate-800">
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </button>
+                                        {% else  %}
+                                            <button class="text-slate-600 hover:text-slate-800">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                        {% endif %}
+
+                                        {% if currentUser is same as (s.organisateur) %}
+                                            <button class="text-slate-600 hover:text-slate-800">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="my-6 px-4">
+                    <a href="{{ path('sortie_create') }}" class="w-full bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none ">Créer une sortie</a>
+                </div>
+            {% else %}
+                <div class="flex flex-col justify-around mt-4 px-4 mx-auto">
+                    <p>Pas encore de sortie, ajoutez la vôtre !</p>
+                    <a
+                        href="{{ path('sortie_create') }}"
+                        class="text-center mx-auto mt-2 bg-[#fac108] w-fit text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none ">Créer une sortie</a>
+                </div>
+            {% endif %}
         </div>
-        <button class="h-fit w-1/5 bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none">Rechercher</button>
-        {{ form_end(searchForm) }}
-    </div>
-</div>
-
-    <h1 class="font-light leading-snug tracking-tight text-slate-800 mx-auto my-6 w-full text-center text-2xl lg:max-w-3xl lg:text-5xl">Liste des sorties</h1>
-    {% if sorties is not empty  %}
-    <div class="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border px-4">
-        <table class="w-full text-left table-auto min-w-max text-slate-800">
-            <thead>
-                <tr class="text-slate-500 border-b border-slate-300 bg-slate-50">
-                    <th class="p-4"><p class="text-sm leading-none font-normal">Nom de la sortie</p></th>
-                    <th class="p-4"><p class="text-sm leading-none font-normal">Date de la sortie</p></th>
-                    <th class="p-4"><p class="text-sm leading-none font-normal">Clôture</p></th>
-                    <th class="p-4"><p class="text-sm leading-none font-normal">Inscrits/Places</p></th>
-                    <th class="p-4"><p class="text-sm leading-none font-normal">Etat</p></th>
-                    <th class="p-4"><p class="text-sm leading-none font-normal">Inscrit</p></th>
-                    <th class="p-4"><p class="text-sm leading-none font-normal">Organisateur</p></th>
-                    <th class="p-4"><p class="text-sm leading-none font-normal">Actions</p></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for s in sorties %}
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-4"><p class="text-sm font-bold">{{ s.nom }}</p></td>
-                        <td class="p-4"><p class="text-sm font-bold">{{ s.dateHeureDebut | date('d/m/Y H:i') }}</p></td>
-                        <td class="p-4"><p class="text-sm font-bold">{{ s.dateLimiteInscription | date('d/m/Y') }}</p></td>
-                        <td class="p-4"><p class="text-sm font-bold">{{ s.participants | length }} / {{ s.nbInscriptionMax }}</p></td>
-                        <td class="p-4"><p class="text-sm font-bold">{{ s.etat.libelle.value }}</p></td>
-                        <td class="p-4"><p class="text-sm font-bold text-center">{{ currentUser in s.participants ? 'X' : '' }}</p></td>
-                        <td class="p-4"><p class="text-sm font-bold pb-1 hover:underline hover:text-[#fac108] transition"><a href="{{ path('app_profile_show', { pseudo: s.organisateur.pseudo }) }}">{{ s.organisateur.prenom }} {{ s.organisateur.nom }}</a></p></td>
-                        <td class="p-4"><p class="text-sm font-bold">
-                            <div class="block text-center">
-                                <button class="text-slate-600 hover:text-slate-800">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                        <path d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v.75c0 1.036.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875v-.75C22.5 3.839 21.66 3 20.625 3H3.375Z" />
-                                        <path fill-rule="evenodd" d="m3.087 9 .54 9.176A3 3 0 0 0 6.62 21h10.757a3 3 0 0 0 2.995-2.824L20.913 9H3.087ZM12 10.5a.75.75 0 0 1 .75.75v4.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 1 1 1.06-1.06l1.72 1.72v-4.94a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <button class="text-slate-600 hover:text-slate-800">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                        <path d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 0 1 3.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0 1 21 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 0 1 7.5 16.125V3.375Z" />
-                                        <path d="M15 5.25a5.23 5.23 0 0 0-1.279-3.434 9.768 9.768 0 0 1 6.963 6.963A5.23 5.23 0 0 0 17.25 7.5h-1.875A.375.375 0 0 1 15 7.125V5.25ZM4.875 6H6v10.125A3.375 3.375 0 0 0 9.375 19.5H16.5v1.125c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625V7.875C3 6.839 3.84 6 4.875 6Z" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>Pas encore de sortie, ajoutez la vôtre ! + ajouter bouton</p>
-
-    {% endif %}
-    </div>
-
-<div class="mt-4 px-4">
-    <a href="{{ path('sortie_create') }}" class="w-full bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none ">Créer une sortie</a>
-</div>
-
+    </section>
 {% endblock %}
 

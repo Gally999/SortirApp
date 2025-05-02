@@ -2,13 +2,10 @@
 
 namespace App\Repository;
 
-use App\Entity\Etat;
-use App\Entity\Lieu;
 use App\Entity\Campus;
 use DateTimeImmutable;
-use App\Entity\Participant;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Campus>
@@ -19,8 +16,7 @@ class CampusRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Campus::class);
     }
-
-
+    
     public function insertSortie(): void
     {
         $em = $this->getEntityManager();
