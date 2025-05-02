@@ -60,9 +60,20 @@ final class SortieController extends AbstractController
     }
 
     #[Route(path: '/{id}', name: 'sortie_details', requirements: ['id'=>'\d+'], methods: ['GET'])]
-    public function details(Sortie $sortie, ParticipantRepository $participantRepo): Response
+    public function details(int $id, SortieRepository $sortieRepo, ParticipantRepository $participantRepo): Response
     {
+        $sortie = $sortieRepo->find($id);
         $currentUser = $participantRepo->find($this->getUser()->getId());
+
+        if (!$sortie) {
+            throw $this->createNotFoundException("Cette sortie n'est pas disponible");
+        }
+        // dd($sortie);
+        if (($sortie->getEtat()->getLibelle() == EtatEnum::EnCreation) && ($sortie->getOrganisateur() !== $currentUser)) {
+            $this->addFlash('error', 'Vous n\'êtes pas authorisé à voir cette sortie' );
+            return $this->redirectToRoute('sortie_list');
+        }
+
         return $this->render('sortie/details.html.twig', [
             "sortie" => $sortie,
             "currentUser" => $currentUser,
