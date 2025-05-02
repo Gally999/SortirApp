@@ -1,0 +1,72 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block body %}
+    <div class="mb-10">
+        <h1>{{ sortie.nom }} organisé par le campus de
+            <span class="underline decoration-solid hover:text-[#fac108]">
+                <a
+                    href="{{ path('sortie_list', {
+                        'sortie_filter': {
+                            'campus': sortie.campus.id,
+                            'searchTerm': '',
+                            'startDate': date('now')|date('Y-m-d'),
+                            'endDate': date('now +2 month')|date('Y-m-d')
+                        }
+                        }) }}"
+                >
+                    {{ sortie.campus.nom }}
+                </a>
+            </span>
+        </h1>
+        <div class="flex flex-row w-2/3 my-3 mx-auto">
+            <section class="flex flex-col flex-wrap items-start w-1/2">
+                <h2>Rendez-vous le {{ sortie.dateHeureDebut | date('d/m/Y') }}</h2>
+                <div class="flex flex-col mx-auto justify-center">
+                    <div>Date limite d'inscription : <strong>{{ sortie.dateLimiteInscription | date('d/m/Y')}}</strong></div>
+                    <div>Prévoyez environ <strong>{{ (sortie.duree // 60) }}h {{ (sortie.duree % 60) }}min</strong></div>
+                    {#    {% set placesRestantes = (sortie.nbInscriptionMax - sortie.participants | length) %}#}
+                    {% set etatEnum = enum('App\\Enum\\EtatEnum') %}
+                    {% set placesRestantes = sortie.nbInscriptionMax - sortie.participants|length %}
+                    {% if sortie.etat.libelleString is same as (etatEnum.Ouverte.value) %}
+                        <div>Il reste <strong>{{ placesRestantes }} places</strong> / {{ sortie.nbInscriptionMax }}</div>
+                        {% if app.user not in sortie.participants %}
+                            <a href="{{ path('sortie_create') }}" class="mt-4 w-32 mx-auto text-center bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none ">Je m'inscris !</a>
+                        {% endif %}
+                    {% elseif sortie.etat.libelleString in [etatEnum.Cloturee.value, etatEnum.EnCours.value, etatEnum.Terminee.value, etatEnum.Annulee.value] %}
+                        <div>Les inscriptions sont fermées</div>
+                    {% endif %}
+                    {% if sortie.etat.libelleString in [etatEnum.Ouverte.value, etatEnum.Cloturee.value, etatEnum.EnCours.value] %}
+                        {% if currentUser in sortie.participants %}
+                            <a href="{{ path('sortie_create') }}" class="mt-4 w-44 mx-auto text-center bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none ">Je me désinscris !</a>
+                        {% endif %}
+                    {% endif %}
+
+                </div>
+            </section>
+            <section class="flex flex-col flex-wrap items-start w-1/2">
+                <h2>Informations sur la sortie</h2>
+                    <div class="flex flex-col mx-auto w-11/12">
+                        <div>Où ? {{ sortie.lieu.nom }}</div>
+                        <div>Où exactement ? {{ sortie.lieu.rue }} - {{ sortie.lieu.ville.codePostal }} {{ sortie.lieu.ville.nom }}</div>
+                        <div class="text-wrap">On t'en dit plus : {{ sortie.infosSortie }}</div>
+                        <div>Coordonnées GPS : {{ sortie.lieu.latitude ~ ' / ' ~ sortie.lieu.longitude }}</div>
+                    </div>
+            </section>
+        </div>
+        <section class="flex flex-col flex-wrap w-1/2 mx-auto items-center text-center mb-12">
+            <h2>Qui participe ?</h2>
+            {% for p in sortie.participants  %}
+                <div><a
+                        class="hover:text-[#fac108]"
+                        href="{{ path('app_profile_show', { pseudo: p.pseudo }) }}">{{ p.id }} - {{ p.pseudo }}</a> - {{ p.prenom ~ ' ' ~ p.nom}}</div>
+
+            {% endfor %}
+        </section>
+    </div>
+
+{% endblock %}
+
+{% block title %}
+    Détail d'une sortie | {{  parent() }}
+{% endblock %}
+

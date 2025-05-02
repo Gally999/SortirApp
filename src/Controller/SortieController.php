@@ -59,11 +59,20 @@ final class SortieController extends AbstractController
         ]);
     }
 
+    #[Route(path: '/{id}', name: 'sortie_details', requirements: ['id'=>'\d+'], methods: ['GET'])]
+    public function details(Sortie $sortie, ParticipantRepository $participantRepo): Response
+    {
+        $currentUser = $participantRepo->find($this->getUser()->getId());
+        return $this->render('sortie/details.html.twig', [
+            "sortie" => $sortie,
+            "currentUser" => $currentUser,
+        ]);
+    }
+
     #[Route('/creer', name: 'sortie_create', methods: ['GET', 'POST'])]
     public function create(Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository, CampusRepository $campusRepository): Response
     {
         // dd($this->getUser()->getCampus());
-
 
         $sortie = new Sortie();
         $form = $this->createForm(SortieType::class, $sortie);
@@ -143,7 +152,6 @@ final class SortieController extends AbstractController
 
             $entityManager->persist($sortie);
             $entityManager->flush();
-
 
             $this->addFlash('success', 'Sortie mise à jour avec succès (État : ' . $etat->getLibelleString() . ')');
             return $this->redirectToRoute('app_profile');
