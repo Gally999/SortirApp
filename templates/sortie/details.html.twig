@@ -27,7 +27,7 @@
 
                     {% set etatEnum = enum('App\\Enum\\EtatEnum') %}
                     {% set placesRestantes = sortie.nbInscriptionMax - sortie.participants|length %}
-                    
+
                     {% if sortie.etat.libelleString is same as (etatEnum.Ouverte.value) %}
                         <div>Il reste <strong>{{ placesRestantes }} places</strong> / {{ sortie.nbInscriptionMax }}</div>
                         {% if app.user not in sortie.participants %}
