@@ -22,7 +22,7 @@
             <section class="flex flex-col flex-wrap items-start w-1/2">
                 <h2>Rendez-vous le {{ sortie.dateHeureDebut | date('d/m/Y') }}</h2>
                 <div class="flex flex-col mx-auto justify-center">
-                    <div>Date limite d'inscription : <strong>{{ sortie.dateLimiteInscription | date('d/m/Y')}}</strong></div>
+                    <div><span class="border-b border-[#fac108]">Date limite d'inscription :</span> <strong>{{ sortie.dateLimiteInscription | date('d/m/Y')}}</strong></div>
                     <div>Prévoyez environ <strong>{{ (sortie.duree // 60) }}h {{ (sortie.duree % 60) }}min</strong></div>
                     {#    {% set placesRestantes = (sortie.nbInscriptionMax - sortie.participants | length) %}#}
                     {% set etatEnum = enum('App\\Enum\\EtatEnum') %}
@@ -33,7 +33,7 @@
                             <a href="{{ path('sortie_create') }}" class="mt-4 w-32 mx-auto text-center bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none ">Je m'inscris !</a>
                         {% endif %}
                     {% elseif sortie.etat.libelleString in [etatEnum.Cloturee.value, etatEnum.EnCours.value, etatEnum.Terminee.value, etatEnum.Annulee.value] %}
-                        <div>Les inscriptions sont fermées</div>
+                        <div>Les inscriptions sont fermées <i class="fa-solid fa-ban"></i></div>
                     {% endif %}
                     {% if sortie.etat.libelleString in [etatEnum.Ouverte.value, etatEnum.Cloturee.value, etatEnum.EnCours.value] %}
                         {% if currentUser in sortie.participants %}
@@ -46,19 +46,23 @@
             <section class="flex flex-col flex-wrap items-start w-1/2">
                 <h2>Informations sur la sortie</h2>
                     <div class="flex flex-col mx-auto w-11/12">
-                        <div>Où ? {{ sortie.lieu.nom }}</div>
-                        <div>Où exactement ? {{ sortie.lieu.rue }} - {{ sortie.lieu.ville.codePostal }} {{ sortie.lieu.ville.nom }}</div>
-                        <div class="text-wrap">On t'en dit plus : {{ sortie.infosSortie }}</div>
-                        <div>Coordonnées GPS : {{ sortie.lieu.latitude ~ ' / ' ~ sortie.lieu.longitude }}</div>
+                        <p><span class="border-b border-[#fac108]">Où ?</span> {{ sortie.lieu.nom }}</p>
+                        <p><span class="border-b border-[#fac108]">Où exactement ?</span> {{ sortie.lieu.rue }} - {{ sortie.lieu.ville.codePostal }} {{ sortie.lieu.ville.nom }}</p>
+                        <p class="text-wrap"><span class="border-b border-[#fac108]">On t'en dit plus :</span> {{ sortie.infosSortie }}</p>
+                        <p><span class="border-b border-[#fac108]">Coordonnées GPS :</span> {{ sortie.lieu.latitude ~ ' / ' ~ sortie.lieu.longitude }}</p>
                     </div>
             </section>
         </div>
         <section class="flex flex-col flex-wrap w-1/2 mx-auto items-center text-center mb-12">
             <h2>Qui participe ?</h2>
             {% for p in sortie.participants  %}
-                <div><a
+                <div>
+                    <a
                         class="hover:text-[#fac108]"
-                        href="{{ path('app_profile_show', { pseudo: p.pseudo }) }}">{{ p.id }} - {{ p.pseudo }}</a> - {{ p.prenom ~ ' ' ~ p.nom}}</div>
+                        href="{{ path('app_profile_show', { pseudo: p.pseudo }) }}">{{ p.pseudo }}
+                    </a>
+                    - {{ p.prenom ~ ' ' ~ p.nom}}
+                </div>
 
             {% endfor %}
         </section>
