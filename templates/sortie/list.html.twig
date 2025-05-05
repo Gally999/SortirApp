@@ -103,7 +103,7 @@
                                 <td class="p-4"><p class="text-sm font-bold">{{ s.participants | length }} / {{ s.nbInscriptionMax }}</p></td>
                                 <td class="p-4"><p class="text-sm font-bold">{{ s.etat.libelle.value }}</p></td>
                                 <td class="p-4"><p class="text-sm font-bold text-center">{{ currentUser in s.participants ? '<i class="fa-solid fa-check"></i>' : '' }}</p></td>
-                                <td class="p-4"><p class="text-sm font-bold pb-1 hover:underline hover:text-[#fac108] transition"><a href="{{ path('app_profile_show', { pseudo: s.organisateur.pseudo }) }}">{{ s.organisateur.prenom }} {{ s.organisateur.nom }}</a></p></td>
+                                <td class="p-4"><p class="text-sm font-bold pb-1 hover:underline hover:text-[#fac108] transition"><a href="{{ path('app_profile_show', { pseudo: s.organisateur.pseudo }) }}">{{ s.organisateur.nomComplet }}</a></p></td>
                                 <td class="p-4"><p class="text-sm font-bold">
                                     <div class="flex flex-row justify-around text-center w-2/3">
                                         {% if currentUser in s.participants %}

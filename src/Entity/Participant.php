@@ -182,6 +182,11 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getNomComplet(): ?string
+    {
+        return $this->prenom . " " . $this->nom;
+    }
+
     public function getTelephone(): ?string
     {
         return $this->telephone;

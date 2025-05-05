@@ -48,7 +48,7 @@
             <section class="flex flex-col flex-wrap items-start w-1/2">
                 <h2>Informations sur la sortie</h2>
                     <div class="flex flex-col mx-auto w-11/12">
-                        <p><span class="border-b border-[#fac108]">Où ?</span> {{ sortie.lieu.nom }}</p>
+                        <p><span >Où ?</span> {{ sortie.lieu.nom }}</p>
                         <p><span class="border-b border-[#fac108]">Où exactement ?</span> {{ sortie.lieu.rue }} - {{ sortie.lieu.ville.codePostal }} {{ sortie.lieu.ville.nom }}</p>
                         <p class="text-wrap"><span class="border-b border-[#fac108]">On t'en dit plus :</span> {{ sortie.infosSortie }}</p>
                         <p><span class="border-b border-[#fac108]">Coordonnées GPS :</span> {{ sortie.lieu.latitude ~ ' / ' ~ sortie.lieu.longitude }}</p>
@@ -57,13 +57,19 @@
         </div>
         <section class="flex flex-col flex-wrap w-1/2 mx-auto items-center text-center mb-12">
             <h2>Qui participe ?</h2>
+            <p>
+                <span class="border-b border-[#fac108]">Organisateur :</span>
+                <a
+                    class="hover:text-[#fac108]"
+                    href="{{ path('app_profile_show', { pseudo: sortie.organisateur.pseudo }) }}">{{ sortie.organisateur.nomComplet}}</a>
+             </p>
             {% for p in sortie.participants  %}
                 <div>
                     <a
                         class="hover:text-[#fac108]"
                         href="{{ path('app_profile_show', { pseudo: p.pseudo }) }}">{{ p.pseudo }}
                     </a>
-                    - {{ p.prenom ~ ' ' ~ p.nom}}
+                    - {{ p.nomComplet}}
                 </div>
 
             {% endfor %}
