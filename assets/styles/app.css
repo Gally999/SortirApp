@@ -33,3 +33,15 @@ h1 {
 h2 {
   @apply font-light leading-snug tracking-tight text-[#fac108] mx-auto my-4 w-full text-center text-xl lg:max-w-2xl lg:text-3xl
 }
+
+.btn-hover-transition {
+  @apply bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none
+}
+
+.p-underline {
+  @apply border-b border-[#fac108]
+}
+
+.link-hover-yellow {
+  @apply hover:underline hover:text-[#fac108] transition
+}
