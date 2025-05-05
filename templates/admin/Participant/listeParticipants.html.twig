@@ -9,6 +9,9 @@
 {% block body %}
 	<div class="container mx-auto mt-10 px-4">
 		<h1 class="text-3xl font-bold mb-6 text-center">Liste des participants</h1>
+		<div class="my-6 px-4">
+			<a href="{{ path('admin_participants_create') }}" class="w-full bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none ">Créer un utilisateur</a>
+		</div>
 
 		<select name="campus" id="campusEl" class="block w-max mb-4 max-w-xs rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 shadow-sm focus:border-[#fac108] focus:ring focus:ring-[#fac108]/50">
 			<option value="all">Tous les campus</option>
@@ -34,6 +37,7 @@
 						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Campus</th>
 						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Actif</th>
 						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Admin</th>
+						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Modifier</th>
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-gray-200">
@@ -56,14 +60,39 @@
 							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.telephone ?? '-' }}</td>
 							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.campus.nom }}</td>
 							<td class="px-6 py-4 text-sm">
-								<span class="inline-block px-2 py-1 text-xs rounded-full {{ participant.actif ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800' }}">
-									{{ participant.actif ? 'Oui' : 'Non' }}
-								</span>
+
+
+								<form action="{{ path('admin_participants_setActif', {'pseudo': participant.pseudo}) }}" method="POST">
+									<input type="hidden" name="_token" value="{{ csrf_token('set_actif_' ~ participant.pseudo) }}">
+									<button type="submit">
+										<span class="cursor-pointer inline-block px-2 py-1 text-xs rounded-full transition duration-300 ease-in-out {{ participant.actif ? 'bg-green-200 text-green-800 hover:bg-gray-200 hover:text-gray-800' : 'bg-red-200 text-red-800 hover:bg-gray-200 hover:text-gray-800' }}">
+											{{ participant.actif ? 'Oui' : 'Non' }}
+										</span>
+									</button>
+								</form>
 							</td>
 							<td class="px-6 py-4 text-sm">
-								<span class="inline-block px-2 py-1 text-xs rounded-full {{ participant.administrateur ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800' }}">
-									{{ participant.administrateur ? 'Oui' : 'Non' }}
-								</span>
+								{% if participant.administrateur %}
+									<span class="cursor-not-allowed inline-block px-2 py-1 text-xs rounded-full transition duration-300 ease-in-out bg-yellow-200 text-yellow-800">
+										Oui
+									</span>
+								{% else %}
+									<form action="{{ path('admin_participants_setAdmin', {'pseudo': participant.pseudo}) }}" method="POST" onsubmit="return confirm('Etes-vous sur de vouloir passer {{ participant.pseudo }} en admin ? Cette action est irreversible')">
+										<input type="hidden" name=" _token" value=" {{ csrf_token('set_admin_' ~ participant.pseudo) }} ">
+										<button type="submit">
+											<span class="cursor-pointer inline-block px-2 py-1 text-xs rounded-full transition duration-300 ease-in-out bg-gray-200 text-gray-800 hover:bg-yellow-200 hover:text-yellow-800">
+												Non
+											</span>
+										</button>
+									</form>
+								{% endif %}
+
+
+							</td>
+							<td class="px-6 py-4 text-sm">
+								<a href="{{path('admin_participants_modify', {'pseudo': participant.pseudo})}}">
+									<i class="cursor-pointer fa-sharp-duotone fa-solid fa-square-pen fa-2xl text-[#fac108] hover:text-black transition duration-300 ease-in-out"></i>
+								</a>
 							</td>
 						</tr>
 					{% else %}
@@ -73,6 +102,9 @@
 					{% endfor %}
 				</tbody>
 			</table>
+			<div class="my-6 px-4">
+				<a href="{{ path('admin_participants_create') }}" class="w-full bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none ">Créer un utilisateur</a>
+			</div>
 		</div>
 	</div>
 {% endblock %}
@@ -87,7 +119,15 @@
 		$(document).ready(function () {
 const table = $("#participants-table").DataTable({
 order: [
-[1, "asc"]
+[2, "asc"]
+],
+columnDefs: [
+{
+targets: [
+1, 10
+],
+orderable: false
+}
 ]
 });
 

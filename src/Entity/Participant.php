@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-
+use Symfony\Component\Validator\Constraints as Assert;
 /*
 * Permet d'afficher un message d'erreur en front si ces infos sont déjà utilisé
 */
@@ -35,50 +35,61 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: 'L\'email est obligatoire')]
+    #[Assert\Email(message: 'L\'email {{ value }} n\'est pas un email valide.')]
+    #[Assert\Length(max: 180)]
     private ?string $email = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: 'Le pseudo est obligatoire')]
+    #[Assert\Length(max: 180, maxMessage: 'Le pseudo doit comporter au plus {{ limit }} caractères')]
     private ?string $pseudo = null;
 
-    /**
-     * @var list<string> The user roles
-     */
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
+    #[Assert\NotBlank(message: 'Le mot de passe est obligatoire')]
+    #[Assert\Length(min: 8, max: 255, minMessage: 'Le mot de passe doit comporter au moins {{ limit }} caractères', maxMessage: 'Le mot de passe doit comporter au plus {{ limit }} caractères')]
     private ?string $password = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire')]
+    #[Assert\Length(max: 50, maxMessage: 'Le nom doit comporter au plus {{ limit }} caractères')]
     private ?string $nom = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Le prrenom est obligatoire')]
+    #[Assert\Length(max: 50, maxMessage: 'Le prénom doit comporter au plus {{ limit }} caractères')]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 15, nullable: true)]
+    #[Assert\Length(max: 15, maxMessage: 'Le tel doit comporter au plus {{ limit }} caractères')]
     private ?string $telephone = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
     private ?bool $administrateur = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
     private ?bool $actif = null;
 
     #[ORM\ManyToOne(inversedBy: 'participants')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?Campus $campus = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $profile_picture = null;
+
 
     /**
      * @var Collection<int, Sortie>
      */
     #[ORM\ManyToMany(targetEntity: Sortie::class, mappedBy: 'participants')]
     private Collection $sorties;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $profile_picture = null;
 
     public function __construct()
     {
