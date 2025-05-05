@@ -105,21 +105,30 @@
                                 <td class="p-4"><p class="text-sm font-bold text-center">{{ currentUser in s.participants ? '<i class="fa-solid fa-check"></i>' : '' }}</p></td>
                                 <td class="p-4"><p class="text-sm font-bold pb-1 link-hover-yellow"><a href="{{ path('app_profile_show', { pseudo: s.organisateur.pseudo }) }}">{{ s.organisateur.nomComplet }}</a></p></td>
                                 <td class="p-4"><p class="text-sm font-bold">
-                                    <div class="flex flex-row justify-around text-center w-2/3">
+                                    <div class="flex flex-row justify-around text-center w-full">
                                         {% if currentUser in s.participants %}
-                                            <button class="text-slate-600 hover:text-slate-800">
-                                                <i class="fa-solid fa-xmark"></i>
-                                            </button>
+                                            <a class="icon-hover-transition" title="Me désinscrire">
+                                                <i class="fa-solid fa-xmark mx-1"></i>
+                                            </a>
                                         {% else  %}
-                                            <button class="text-slate-600 hover:text-slate-800">
-                                                <i class="fa-solid fa-plus"></i>
-                                            </button>
+                                            <a class="icon-hover-transition" title="M'inscrire">
+                                                <i class="fa-solid fa-plus mx-1"></i>
+                                            </a>
                                         {% endif %}
 
-                                        {% if currentUser is same as (s.organisateur) %}
-                                            <button class="text-slate-600 hover:text-slate-800">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </button>
+                                        {% if currentUser is same as (s.organisateur) and s.etat.libelleString is same as (enum('App\\Enum\\EtatEnum').EnCreation.value)%}
+                                            <a class="icon-hover-transition" title="Publier" href="{{ path('sortie_publish', { id: s.id }) }}">
+                                                <i class="fa-solid fa-upload mx-1"></i>
+                                            </a>
+                                            <form method="POST" action="{{ path('sortie_delete', { id: s.id }) }}"
+                                                  onsubmit="return confirm('Confirmer la suppression ?');"
+                                            >
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ s.id) }}">
+                                                <button type="submit" class="icon-hover-transition" title="Supprimer">
+                                                    <i class="fa-solid fa-trash mx-1"></i>
+                                                </button>
+                                            </form>
+
                                         {% endif %}
                                     </div>
                                 </td>

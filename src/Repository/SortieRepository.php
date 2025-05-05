@@ -43,19 +43,31 @@ class SortieRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-    public function findSortiesActives(Campus $campus): array
+    public function findSortiesActives(?Participant $user = null): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder
             ->leftJoin('s.campus', 'c')->addSelect('c')
             ->leftJoin('s.etat', 'e')->addSelect('e')
-            ->where('e.libelle IN (:etats)')
+            ->leftJoin('s.organisateur', 'o')->addSelect('o')
+            ->where(
+                $queryBuilder->expr()->orX(
+                    'e.libelle IN (:etats)',
+                    'e.libelle = :etatEnCreation AND o = :user'
+                )
+            )
             ->setParameter('etats', EtatEnum::actives())
+            ->setParameter('etatEnCreation', EtatEnum::EnCreation)
+            ->setParameter('user', $user)
             ->andWhere('s.campus = :campus')
-            ->setParameter('campus', $campus)
+            ->setParameter('campus', $user->getCampus())
+            ->addOrderBy(
+                "CASE WHEN e.libelle = :etatEnCreation THEN 1 ELSE 0 END",
+                "ASC"
+            )
             ->addOrderBy('s.dateHeureDebut', 'ASC');
-        $query = $queryBuilder->getQuery();
-        return $query->getResult();
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
     public function findSortiesWithFilters(
@@ -76,21 +88,28 @@ class SortieRepository extends ServiceEntityRepository
             ->leftJoin('s.etat', 'e')->addSelect('e')
             ->join('s.organisateur', 'o')->addSelect('o')
             ->where('s.campus = :campus')
-            ->setParameter('campus', $campus)
-            ->addOrderBy('s.dateHeureDebut', 'ASC');
+            ->setParameter('campus', $campus);
+
+        // Ajout du paramètre user en amont
+        if ($user) {
+            $queryBuilder->setParameter('user', $user);
+        }
 
         if ($showTerminees) {
             $queryBuilder->andWhere('e.libelle = :etatTerminee')
                 ->setParameter('etatTerminee', EtatEnum::Terminee);
         } else {
-            $queryBuilder->andWhere(
-                $queryBuilder->expr()->orX(
-                'e.libelle IN (:etats)',
-                'e.libelle = :etatEnCreation AND s.organisateur = :user'
-            ))
-                ->setParameter('etats', EtatEnum::actives())
-                ->setParameter('etatEnCreation', EtatEnum::EnCreation)
-                ->setParameter('user', $user);
+            $or = $queryBuilder->expr()->orX(
+                'e.libelle IN (:etats)'
+            );
+
+            // Si un user est connecté, on ajoute aussi les sorties "en création" dont il est organisateur
+            if ($user) {
+                $or->add('e.libelle = :etatEnCreation AND s.organisateur = :user');
+            }
+
+            $queryBuilder->andWhere($or)
+                ->setParameter('etats', EtatEnum::actives());
         }
 
         if ($searchTerm) {
@@ -110,24 +129,30 @@ class SortieRepository extends ServiceEntityRepository
                 ->setParameter('endDate', $endDate);
         }
 
-        if ($isOrganisateur) {
+        if ($isOrganisateur && $user) {
             $queryBuilder
-                ->andWhere('s.organisateur = :user')
-                ->setParameter('user', $user);
+                ->andWhere('s.organisateur = :user');
         }
 
         // Si je suis inscrit
-        if ($isInscrit) {
+        if ($isInscrit && $user) {
             $queryBuilder
-                ->andWhere(':user MEMBER OF s.participants')
-                ->setParameter('user', $user);
+                ->andWhere(':user MEMBER OF s.participants');
         }
 
         // Si je ne suis PAS inscrit
-        if ($isNotInscrit) {
-            $queryBuilder->andWhere(':user NOT MEMBER OF s.participants')
-                ->setParameter('user', $user);
+        if ($isNotInscrit && $user) {
+            $queryBuilder->andWhere(':user NOT MEMBER OF s.participants');
         }
+
+        // Tri
+        $queryBuilder
+            ->addOrderBy(
+            "CASE WHEN e.libelle = :etatEnCreation THEN 1 ELSE 0 END",
+            "ASC"
+        )
+            ->addOrderBy('s.dateHeureDebut', 'ASC')
+            ->setParameter('etatEnCreation', EtatEnum::EnCreation);
 
         return $queryBuilder->getQuery()->getResult();
     }

@@ -49,7 +49,7 @@ final class SortieController extends AbstractController
             );
         } else {
             // Sorties par défaut - état = actif + campus de l'utilisateur connecté
-            $sorties = $sortieRepository->findSortiesActives($participant->getCampus());
+            $sorties = $sortieRepository->findSortiesActives($participant);
         }
 
         return $this->render('sortie/list.html.twig', [
@@ -98,7 +98,6 @@ final class SortieController extends AbstractController
             if ($action === 'publish') {
                 $etat = $etatRepository->findOneBy(['libelle' => EtatEnum::Ouverte]);
             } else {
-
                 $etat = $etatRepository->findOneBy(['libelle' => EtatEnum::EnCreation]);
             }
 
@@ -113,7 +112,7 @@ final class SortieController extends AbstractController
 
 
             $this->addFlash('success', 'Sortie créée avec succès (État : ' . $etat->getLibelleString() . ')');
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('sortie_details', ['id' => $sortie->getId()]);
         }
 
         return $this->render('sortie/create.html.twig', [
@@ -146,12 +145,10 @@ final class SortieController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-
             $action = $request->get('action'); // 'save' ou 'publish'
             if ($action === 'publish') {
                 $etat = $etatRepository->findOneBy(['libelle' => EtatEnum::Ouverte]);
             } else {
-
                 $etat = $etatRepository->findOneBy(['libelle' => EtatEnum::EnCreation]);
             }
 
@@ -165,7 +162,7 @@ final class SortieController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Sortie mise à jour avec succès (État : ' . $etat->getLibelleString() . ')');
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('sortie_details', ['id' => $sortie->getId()]);
         }
         return $this->render('sortie/modify.html.twig', [
             'form' => $form,
@@ -194,16 +191,45 @@ final class SortieController extends AbstractController
         } elseif (!$this->isCsrfTokenValid('delete' . $sortie->getId(), $request->request->get('_token'))) {
             $this->addFlash('error', 'Token invalide');
             return $this->redirectToRoute('sortie_list');
-        } elseif (!$user->isAdministrateur()) {
-            $this->addFlash('error', 'Il faut être administrateur pour gérer une sortie');
-            return $this->redirectToRoute('sortie_list');
         }
 
         if ($sortie instanceof Sortie) {
             $entityManager->remove($sortie);
             $entityManager->flush();
             $this->addFlash('success', 'Sortie supprimée avec succès');
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('sortie_list');
         }
+    }
+
+    #[Route('/{id}/publish', name: 'sortie_publish', requirements: ['id'=>'\d+'], methods: ['GET'])]
+    public function publishSortie(
+        int $id,
+        SortieRepository $sortieRepository,
+        EtatRepository $etatRepository,
+        EntityManagerInterface $entityManager
+    ) {
+
+        $sortie = $sortieRepository->find($id);
+
+        if (!$sortie) {
+            $this->addFlash('error', 'Sortie introuvable');
+            return $this->redirectToRoute('sortie_list');
+        } elseif ($this->getUser()->getId() !== $sortie->getOrganisateur()->getId()) {
+            $this->addFlash('error', 'Vous n\'avez pas le droit de modifier cette sortie');
+            return $this->redirectToRoute('sortie_list');
+        } elseif ($sortie->getEtat()->getLibelle() != EtatEnum::EnCreation) {
+            $this->addFlash('error', 'Vous ne pouvez modifier qu\'une sortie en cours de création (état actuel : ' . $sortie->getEtat()->getLibelleString() . ')');
+            return $this->redirectToRoute('sortie_list');
+        }
+
+        $etat = $etatRepository->findOneBy(['libelle' => EtatEnum::Ouverte]);
+        if ($etat) {
+            $sortie->setEtat($etat);
+        }
+        // $entityManager->persist($sortie);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Sortie mise à jour avec succès (État : ' . $etat->getLibelleString() . ')');
+        return $this->redirectToRoute('sortie_list');
     }
 }
