@@ -25,6 +25,7 @@
 				<thead class="bg-[#fac108] text-black">
 					<tr>
 						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">ID</th>
+						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Image</th>
 						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Pseudo</th>
 						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Nom</th>
 						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Prénom</th>
@@ -39,6 +40,15 @@
 					{% for participant in participants %}
 						<tr class="hover:bg-gray-50">
 							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.id }}</td>
+							{% if participant.profilePicture == null %}
+								<td class="px-6 py-4 text-sm text-gray-800">
+									{% include "partials/profile/defaultProfilePicture.html.twig" with {'participant': participant} %}
+								</td>
+							{% else %}
+								<td class="px-6 py-4 text-sm text-gray-800">
+									<img src="{{ asset('uploads/profile_pictures/' ~ participant.profilePicture) }}" class="object-cover w-20 h-20 rounded-xl" width="100" height="100" alt="Photo de profil">
+								</td>
+							{% endif %}
 							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.pseudo }}</td>
 							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.nom }}</td>
 							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.prenom }}</td>

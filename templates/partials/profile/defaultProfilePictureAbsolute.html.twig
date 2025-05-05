@@ -1,0 +1,19 @@
+{% set pastelColors = {
+    'green': '#bbf7d0',
+    'blue': '#bfdbfe',
+    'red': '#fecaca',
+    'yellow': '#fef9c3',
+    'indigo': '#c7d2fe',
+    'rose': '#fbcfe8',
+    'lime': '#d9f99d',
+    'teal': '#94f9f8',
+    'cyan': '#94f9f8',
+    'fuchsia': '#fbcfe8',
+    'emerald': '#d9f99d'
+} %}
+{% set colorName = random(pastelColors|keys) %}
+{% set bgColor = pastelColors[colorName] %}
+
+<div class="absolute top-4 left-4 w-24 h-24 rounded-xl flex items-center justify-center" style="background-color: {{ bgColor }};">
+	<p class="text-4xl font-bold">{{ participant.getInitial()|upper }}</p>
+</div>

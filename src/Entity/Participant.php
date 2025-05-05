@@ -102,6 +102,11 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getInitial(): string
+    {
+        return substr($this->prenom, 0, 1) . substr($this->nom, 0, 1);
+    }
+
     /**
      * A visual identifier that represents this user.
      *

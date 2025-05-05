@@ -1,18 +1,33 @@
 {% extends 'layouts/base.html.twig' %}
 
 {% block body %}
-    <div class=" relative max-w-xl mx-auto mt-10 mb-12 p-6 bg-white rounded-2xl shadow-md">
-        <h1 class="text-center text-3xl font-bold mb-6 text-gray-800">
-            Profil de {{ participant.pseudo }}
-        </h1>
-        <img src="{{ asset('uploads/profile_pictures/' ~ participant.profilePicture) }}" class="absolute top-4 left-4 w-20 h-20 rounded-xl" width="100" height="100" alt="Photo de profil">
+	<div class=" relative max-w-xl mx-auto mt-10 mb-12 p-6 bg-white rounded-2xl shadow-md">
+		<h1 class="text-center text-3xl font-bold mb-6 text-gray-800">
+			Profil de
+			{{ participant.pseudo }}
+		</h1>
+		{% if participant.profilePicture == null %}
+			{% include "partials/profile/defaultProfilePictureAbsolute.html.twig" with {'participant': participant} %}
+		{% else %}
+			<img src="{{ asset('uploads/profile_pictures/' ~ participant.profilePicture) }}" class="absolute top-4 left-4  object-cover w-20 h-20 rounded-xl" width="100" height="100" alt="Photo de profil">
+		{% endif %}
 
-        <div class="space-y-4 text-gray-700 text-lg mt-16">
-            <p><span class="font-semibold">Pseudo :</span> {{ participant.pseudo }}</p>
-            <p><span class="font-semibold">Email :</span> {{ participant.email }}</p>
-            <p><span class="font-semibold">Téléphone :</span> {{ participant.telephone ?? 'Non renseigné' }}</p>
-            <p><span class="font-semibold">Nom :</span> {{ participant.nom }}</p>
-            <p><span class="font-semibold">Prénom :</span> {{ participant.prenom }}</p>
-        </div>
-    </div>
+		<div class="space-y-4 text-gray-700 text-lg mt-16">
+			<p>
+				<span class="font-semibold">Pseudo :</span>
+				{{ participant.pseudo }}</p>
+			<p>
+				<span class="font-semibold">Email :</span>
+				{{ participant.email }}</p>
+			<p>
+				<span class="font-semibold">Téléphone :</span>
+				{{ participant.telephone ?? 'Non renseigné' }}</p>
+			<p>
+				<span class="font-semibold">Nom :</span>
+				{{ participant.nom }}</p>
+			<p>
+				<span class="font-semibold">Prénom :</span>
+				{{ participant.prenom }}</p>
+		</div>
+	</div>
 {% endblock %}
