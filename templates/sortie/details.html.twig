@@ -19,40 +19,49 @@
             </span>
         </h1>
         <div class="flex flex-row w-2/3 my-3 mx-auto">
-            <section class="flex flex-col flex-wrap items-start w-1/2">
-                <h2>Rendez-vous le {{ sortie.dateHeureDebut | date('d/m/Y') }}</h2>
-                <div class="flex flex-col mx-auto justify-center">
-                    <p><span class="border-b border-[#fac108]">Date limite d'inscription :</span> <strong>{{ sortie.dateLimiteInscription | date('d/m/Y')}}</strong></p>
-                    <p>Prévoyez environ <strong>{{ (sortie.duree // 60) }}h {{ (sortie.duree % 60) }}min</strong></p>
+            {% set etatEnum = enum('App\\Enum\\EtatEnum') %}
+            {% if sortie.etat.libelleString == etatEnum.Annulee.value and annulation is not null %}
+                <section class="flex flex-col flex-wrap items-start w-1/2">
+                    <h2>Sortie annulée <i class="fa-solid fa-heart-crack"></i></h2>
+                    <div class="flex flex-col mx-auto justify-center">
+                        <p>Sortie annulée le <strong>{{ annulation.dateAnnulation | date('d/m/Y') }}</strong></p>
+                        <p>Motif : {{ annulation.raison }}</p>
+                    </div>
+                </section>
+            {% else %}
+                <section class="flex flex-col flex-wrap items-start w-1/2">
+                    <h2>Rendez-vous le {{ sortie.dateHeureDebut | date('d/m/Y') }}</h2>
+                    <div class="flex flex-col mx-auto justify-center">
+                        <p><span class="border-b border-[#fac108]">Date limite d'inscription :</span> <strong>{{ sortie.dateLimiteInscription | date('d/m/Y')}}</strong></p>
+                        <p>Prévoyez environ <strong>{{ (sortie.duree // 60) }}h {{ (sortie.duree % 60) }}min</strong></p>
 
-                    {% set etatEnum = enum('App\\Enum\\EtatEnum') %}
-                    {% set placesRestantes = sortie.nbInscriptionMax - sortie.participants|length %}
+                        {% set placesRestantes = sortie.nbInscriptionMax - sortie.participants|length %}
 
-                    {% if ((sortie.etat.libelleString is same as (etatEnum.Ouverte.value)) and (sortie.dateLimiteInscription | date > 'now')) %}
-                        <p>Il reste <strong>{{ placesRestantes }} places</strong> / {{ sortie.nbInscriptionMax }}</p>
-                        {% if (
-                            (currentUser not in sortie.participants)
-                                and (currentUser is not same as sortie.organisateur)
-                                and (sortie.etat.libelleString is same as (etatEnum.Ouverte.value))
-                                and (sortie.dateLimiteInscription | date > 'now')
-                                and (sortie.nbInscriptionMax > sortie.participants | length)
-                            ) %}
-                            <a
-                                href="{{
-                                    path('sortie_inscription', { id: sortie.id, from: 'sortie_details' })
-                                }}"
-                                class="mt-4 w-32 mx-auto text-center btn-hover-transition"
-                            >Je m'inscris !</a>
+                        {% if ((sortie.etat.libelleString is same as (etatEnum.Ouverte.value)) and (sortie.dateLimiteInscription | date > 'now')) %}
+                            <p>Il reste <strong>{{ placesRestantes }} places</strong> / {{ sortie.nbInscriptionMax }}</p>
+                            {% if (
+                                (currentUser not in sortie.participants)
+                                    and (currentUser is not same as sortie.organisateur)
+                                    and (sortie.etat.libelleString is same as (etatEnum.Ouverte.value))
+                                    and (sortie.dateLimiteInscription | date > 'now')
+                                    and (sortie.nbInscriptionMax > sortie.participants | length)
+                                ) %}
+                                <a
+                                    href="{{
+                                        path('sortie_inscription', { id: sortie.id, from: 'sortie_details' })
+                                    }}"
+                                    class="mt-4 w-32 mx-auto text-center btn-hover-transition"
+                                >Je m'inscris !</a>
+                            {% endif %}
+                        {% elseif (sortie.etat.libelleString in [etatEnum.Cloturee.value, etatEnum.EnCours.value, etatEnum.Terminee.value, etatEnum.Annulee.value]) or (sortie.dateLimiteInscription | date < 'now') %}
+                            <p>Les inscriptions sont fermées <i class="fa-solid fa-ban"></i></p>
                         {% endif %}
-                    {% elseif (sortie.etat.libelleString in [etatEnum.Cloturee.value, etatEnum.EnCours.value, etatEnum.Terminee.value, etatEnum.Annulee.value]) or (sortie.dateLimiteInscription | date < 'now') %}
-                        <p>Les inscriptions sont fermées <i class="fa-solid fa-ban"></i></p>
-                    {% endif %}
-                    {% if (currentUser in sortie.participants) and sortie.etat.libelleString in [etatEnum.Ouverte.value, etatEnum.Cloturee.value] %}
-                        <a href="{{ path('sortie_desinscription', { id: sortie.id }) }}" class="mt-4 w-44 mx-auto text-center btn-hover-transition">Je me désinscris !</a>
-                    {% endif %}
-
-                </div>
-            </section>
+                        {% if (currentUser in sortie.participants) and sortie.etat.libelleString in [etatEnum.Ouverte.value, etatEnum.Cloturee.value] %}
+                            <a href="{{ path('sortie_desinscription', { id: sortie.id }) }}" class="mt-4 w-44 mx-auto text-center btn-hover-transition">Je me désinscris !</a>
+                        {% endif %}
+                    </div>
+                </section>
+            {% endif %}
             <section class="flex flex-col flex-wrap items-start w-1/2">
                 <h2>Informations sur la sortie</h2>
                     <div class="flex flex-col mx-auto w-11/12">
@@ -75,6 +84,30 @@
                 <a
                     class="btn-hover-transition"
                     href="{{ path('sortie_modify', { id: sortie.id }) }}">Modifier la sortie</a>
+            {% endif %}
+            {% if (sortie.organisateur is same as currentUser) and (sortie.etat.libelleString in [etatEnum.Ouverte.value, etatEnum.Cloturee.value]) %}
+                <div x-data="{ open: false }">
+                    {# Bouton d'annulation #}
+                    <button @click="open = true" class="btn-hover-transition" title="Annuler">
+                        Annuler la sortie
+                    </button>
+                    {# Modal #}
+                    <div x-show="open" x-transition class="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-50">
+                        <div @click.away="open = false" class="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+                            <h2 class="text-xl font-semibold mb-4">Motif d'annulation</h2>
+
+                            <form method="post" action="{{ path('sortie_annuler', { id: sortie.id }) }}">
+                                <textarea name="motif" required rows="4" class="w-full border border-gray-300 rounded p-2 mb-4" placeholder="Saisissez le motif..."></textarea>
+
+                                <div class="flex justify-end space-x-2">
+                                    <button type="button" @click="open = false" class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400">Annuler</button>
+                                    <button type="submit" class="px-4 py-2 btn-hover-transition">Confirmer</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
             {% endif %}
             {% for p in sortie.participants  %}
                 <div>

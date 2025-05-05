@@ -101,7 +101,7 @@
                                 <td class="p-4"><p class="text-sm font-bold">{{ s.dateHeureDebut | date('d/m/Y H:i') }}</p></td>
                                 <td class="p-4"><p class="text-sm font-bold">{{ s.dateLimiteInscription | date('d/m/Y') }}</p></td>
                                 <td class="p-4"><p class="text-sm font-bold">{{ s.participants | length }} / {{ s.nbInscriptionMax }}</p></td>
-                                <td class="p-4"><p class="text-sm font-bold">{{ s.etat.libelle.value }}</p></td>
+                                <td class="p-4"><p class="text-sm font-bold">{{ s.etat.libelleString }}</p></td>
                                 <td class="p-4"><p class="text-sm font-bold text-center">{{ currentUser in s.participants ? '<i class="fa-solid fa-check"></i>' : '' }}</p></td>
                                 <td class="p-4"><p class="text-sm font-bold pb-1 link-hover-yellow"><a href="{{ path('app_profile_show', { pseudo: s.organisateur.pseudo }) }}">{{ s.organisateur.nomComplet }}</a></p></td>
                                 <td class="p-4"><p class="text-sm font-bold">
@@ -135,7 +135,30 @@
                                                     <i class="fa-solid fa-trash mx-1"></i>
                                                 </button>
                                             </form>
+                                        {% endif %}
 
+                                        {% if currentUser is same as (s.organisateur) and s.etat.libelleString in [etatEnum.Ouverte.value, etatEnum.Cloturee.value] %}
+                                            <div x-data="{ open: false }">
+                                                {# Bouton d'annulation #}
+                                                <button @click="open = true" class="icon-hover-transition" title="Annuler">
+                                                    <i class="fa-solid fa-trash mx-1"></i>
+                                                </button>
+                                                {# Modal #}
+                                                <div x-show="open" x-transition class="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-50">
+                                                    <div @click.away="open = false" class="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+                                                        <h2 class="text-xl font-semibold mb-4">Motif d'annulation</h2>
+
+                                                        <form method="post" action="{{ path('sortie_annuler', {id: s.id}) }}">
+                                                            <textarea name="motif" required rows="4" class="w-full border border-gray-300 rounded p-2 mb-4" placeholder="Saisissez le motif..."></textarea>
+
+                                                            <div class="flex justify-end space-x-2">
+                                                                <button type="button" @click="open = false" class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400">Annuler</button>
+                                                                <button type="submit" class="px-4 py-2 btn-hover-transition">Confirmer</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         {% endif %}
                                     </div>
                                 </td>
