@@ -38,6 +38,10 @@ h2 {
   @apply bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none
 }
 
+.icon-hover-transition {
+  @apply text-slate-600 hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none
+}
+
 .p-underline {
   @apply border-b border-[#fac108]
 }

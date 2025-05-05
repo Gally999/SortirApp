@@ -57,12 +57,17 @@
         </div>
         <section class="flex flex-col flex-wrap w-1/2 mx-auto items-center text-center mb-12">
             <h2>Qui participe ?</h2>
-            <p>
-                <span class="p-underline">Organisateur :</span>
+            <p class="mb-2">
+                <span class="p-underline ">Organisateur :</span>
                 <a
                     class="link-hover-yellow"
                     href="{{ path('app_profile_show', { pseudo: sortie.organisateur.pseudo }) }}">{{ sortie.organisateur.nomComplet}}</a>
              </p>
+            {% if (sortie.organisateur is same as currentUser) and (sortie.etat.libelleString is same as etatEnum.EnCreation.value) %}
+                <a
+                    class="btn-hover-transition"
+                    href="{{ path('sortie_modify', { id: sortie.id }) }}">Modifier la sortie</a>
+            {% endif %}
             {% for p in sortie.participants  %}
                 <div>
                     <a
