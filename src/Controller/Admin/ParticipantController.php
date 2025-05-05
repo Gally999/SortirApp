@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Form\Admin\ParticipantType;
+use App\Form\Admin\ParticipantTypeCreate;
 use App\Repository\CampusRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ParticipantRepository;
@@ -33,6 +34,38 @@ class ParticipantController extends AbstractController
             ]
         );
     }
+
+    #[Route('/create', name: '_create', methods:['GET', 'POST'])]
+    public function createParticipant(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        if($this->getUser()->isAdministrateur() == false){
+            $this->addFlash('error', 'Vous devez etre admin pour ajouter un participant');
+            return $this->redirectToRoute('app_home');
+        }
+        $participant = new \App\Entity\Participant();
+        $form = $this->createForm(ParticipantTypeCreate::class, $participant);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $participant->setPassword(password_hash($participant->getPassword(), PASSWORD_DEFAULT));
+            if($participant->isAdministrateur()){
+                $participant->setRoles(['ROLE_ADMIN']);
+            }
+            $entityManager->persist($participant);
+            $entityManager->flush();
+            $this->addFlash('success', 'Participant ajouté avec succès');
+            return $this->redirectToRoute('admin_participants_list');
+        }
+
+        return $this->render(
+            'admin/Participant/createParticipant.html.twig',
+            [
+                'form' => $form->createView(),
+                'participant' => $participant
+            ]
+            );
+    }
+
     #[Route('/setAdmin/{pseudo}', name: '_setAdmin', methods:['POST'])]
     public function setAdmin($pseudo, ParticipantRepository $participantsRepo, EntityManagerInterface $entityManager, Request $request):Response
     {
@@ -62,6 +95,7 @@ class ParticipantController extends AbstractController
             $participant->setActif(true);
         }
         $participant->setAdministrateur(!$participant->isAdministrateur());
+        $participant->setRoles([$participant->isAdministrateur() ? 'ROLE_ADMIN' : 'ROLE_USER']);
         $entityManager->persist($participant);
         $entityManager->flush();
         if($participant->isAdministrateur()){
