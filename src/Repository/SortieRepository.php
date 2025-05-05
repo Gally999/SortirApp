@@ -90,11 +90,6 @@ class SortieRepository extends ServiceEntityRepository
             ->where('s.campus = :campus')
             ->setParameter('campus', $campus);
 
-        // Ajout du paramètre user en amont
-        if ($user) {
-            $queryBuilder->setParameter('user', $user);
-        }
-
         if ($showTerminees) {
             $queryBuilder->andWhere('e.libelle = :etatTerminee')
                 ->setParameter('etatTerminee', EtatEnum::Terminee);
@@ -105,11 +100,22 @@ class SortieRepository extends ServiceEntityRepository
 
             // Si un user est connecté, on ajoute aussi les sorties "en création" dont il est organisateur
             if ($user) {
+                $queryBuilder->setParameter('user', $user);
                 $or->add('e.libelle = :etatEnCreation AND s.organisateur = :user');
+                $queryBuilder
+                    ->setParameter('etatEnCreation', EtatEnum::EnCreation)
+                    ->addOrderBy(
+                        "CASE WHEN e.libelle = :etatEnCreation THEN 1 ELSE 0 END",
+                        "ASC"
+                    );
             }
 
             $queryBuilder->andWhere($or)
                 ->setParameter('etats', EtatEnum::actives());
+
+            // Tri
+            $queryBuilder
+                ->addOrderBy('s.dateHeureDebut', 'ASC');
         }
 
         if ($searchTerm) {
@@ -131,28 +137,23 @@ class SortieRepository extends ServiceEntityRepository
 
         if ($isOrganisateur && $user) {
             $queryBuilder
-                ->andWhere('s.organisateur = :user');
+                ->andWhere('s.organisateur = :user')
+                ->setParameter('user', $user);
         }
 
         // Si je suis inscrit
         if ($isInscrit && $user) {
             $queryBuilder
-                ->andWhere(':user MEMBER OF s.participants');
+                ->andWhere(':user MEMBER OF s.participants')
+                ->setParameter('user', $user);
         }
 
         // Si je ne suis PAS inscrit
         if ($isNotInscrit && $user) {
-            $queryBuilder->andWhere(':user NOT MEMBER OF s.participants');
+            $queryBuilder
+                ->andWhere(':user NOT MEMBER OF s.participants')
+                ->setParameter('user', $user);
         }
-
-        // Tri
-        $queryBuilder
-            ->addOrderBy(
-            "CASE WHEN e.libelle = :etatEnCreation THEN 1 ELSE 0 END",
-            "ASC"
-        )
-            ->addOrderBy('s.dateHeureDebut', 'ASC')
-            ->setParameter('etatEnCreation', EtatEnum::EnCreation);
 
         return $queryBuilder->getQuery()->getResult();
     }

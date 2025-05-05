@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Annulation;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Enum\EtatEnum;
 use App\Form\SortieFilterType;
 use App\Form\SortieType;
 use App\Model\SortieSearchData;
+use App\Repository\AnnulationRepository;
 use App\Repository\CampusRepository;
 use App\Repository\EtatRepository;
 use App\Repository\ParticipantRepository;
@@ -60,7 +62,12 @@ final class SortieController extends AbstractController
     }
 
     #[Route(path: '/{id}', name: 'sortie_details', requirements: ['id'=>'\d+'], methods: ['GET'])]
-    public function details(int $id, SortieRepository $sortieRepo, ParticipantRepository $participantRepo): Response
+    public function details(
+        int $id,
+        SortieRepository $sortieRepo,
+        ParticipantRepository $participantRepo,
+        AnnulationRepository $annulationRepo,
+    ): Response
     {
         $sortie = $sortieRepo->find($id);
         $currentUser = $participantRepo->find($this->getUser()->getId());
@@ -68,15 +75,20 @@ final class SortieController extends AbstractController
         if (!$sortie) {
             throw $this->createNotFoundException("Cette sortie n'est pas disponible");
         }
-        // dd($sortie);
+
         if (($sortie->getEtat()->getLibelle() == EtatEnum::EnCreation) && ($sortie->getOrganisateur() !== $currentUser)) {
             $this->addFlash('error', 'Vous n\'êtes pas authorisé à voir cette sortie' );
             return $this->redirectToRoute('sortie_list');
         }
 
+        if ($sortie->getEtat()->getLibelle() == EtatEnum::Annulee) {
+            $annulation = $annulationRepo->findOneBy(['sortie' => $sortie], ['dateAnnulation' => 'DESC']);
+        }
+
         return $this->render('sortie/details.html.twig', [
             "sortie" => $sortie,
             "currentUser" => $currentUser,
+            "annulation" => $annulation,
         ]);
     }
 
@@ -109,7 +121,6 @@ final class SortieController extends AbstractController
 
             $entityManager->persist($sortie);
             $entityManager->flush();
-
 
             $this->addFlash('success', 'Sortie créée avec succès (État : ' . $etat->getLibelleString() . ')');
             return $this->redirectToRoute('sortie_details', ['id' => $sortie->getId()]);
@@ -168,7 +179,6 @@ final class SortieController extends AbstractController
             'form' => $form,
             'campus' => $campus,
             'sortie' => $sortie
-
         ]);
     }
 
@@ -274,7 +284,7 @@ final class SortieController extends AbstractController
         return $this->redirectToRoute($from ?? 'sortie_details', ['id' => $sortie->getId()]);
     }
 
-    #[Route('{id}/desinscrire', name: 'sortie_desinscription', requirements: ['id'=>'\d+'], methods: ['GET'])]
+    #[Route('/{id}/desinscrire', name: 'sortie_desinscription', requirements: ['id'=>'\d+'], methods: ['GET'])]
     public function desinscrire(
         int $id,
         SortieRepository $sortieRepository,
@@ -298,6 +308,52 @@ final class SortieController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Vous avez été désinscrit•e de la sortie ' .  $sortie->getNom() . ' du ' . $sortie->getDateHeureDebut()->format('d/m/Y'));
+        return $this->redirectToRoute('sortie_list');
+    }
+
+    #[Route('/{id}/annuler', name: 'sortie_annuler', requirements: ['id'=>'\d+'], methods: ['POST'])]
+    public function annuler(
+        int $id,
+        SortieRepository $sortieRepository,
+        ParticipantRepository $participantRepository,
+        EtatRepository $etatRepository,
+        EntityManagerInterface $entityManager,
+        Request $request,
+    )
+    {
+        $participant = $participantRepository->find($this->getUser()->getId());
+        $sortie = $sortieRepository->find($id);
+        if (!$sortie) {
+            $this->addFlash('error', 'Sortie introuvable');
+            return $this->redirectToRoute('sortie_list');
+        } elseif ($participant !== $sortie->getOrganisateur()) {
+            $this->addFlash('error', 'Vous ne pouvez pas annuler cette sortie');
+            return $this->redirectToRoute('sortie_list');
+        } elseif ($sortie->getEtat()->getLibelle() !== EtatEnum::Ouverte && $sortie->getEtat()->getLibelle() !== EtatEnum::Cloturee) {
+            $this->addFlash('error', 'Il est trop tard pour annuler cette sortie');
+            return $this->redirectToRoute('sortie_list');
+        }
+
+        $motif = $request->request->get('motif');
+        if (!$motif) {
+            $this->addFlash('danger', 'Le motif est requis.');
+            return $this->redirectToRoute('sortie_details', ['id' => $sortie->getId()]);
+        }
+
+        $etat = $etatRepository->findOneBy(['libelle' => EtatEnum::Annulee]);
+        if ($etat) {
+            $sortie->setEtat($etat);
+        }
+        $entityManager->persist($sortie);
+
+        $annulation = new Annulation();
+        $annulation->setRaison($motif);
+        $annulation->setSortie($sortie);
+        $entityManager->persist($annulation);
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La sortie \'' . $sortie->getNom() . '\' est annulée');
         return $this->redirectToRoute('sortie_list');
     }
 }
