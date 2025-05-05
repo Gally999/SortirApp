@@ -269,9 +269,8 @@ final class SortieController extends AbstractController
         $entityManager->persist($sortie);
         $entityManager->flush();
 
-        $this->addFlash('success', 'Vous êtes inscrit à la sortie ' .  $sortie->getNom() . ' du ' . $sortie->getDateHeureDebut()->format('d/m/Y'));
+        $this->addFlash('success', 'Vous êtes inscrit•e à la sortie ' .  $sortie->getNom() . ' du ' . $sortie->getDateHeureDebut()->format('d/m/Y'));
         $from = $request->query->get('from');
-        // dd($from);
         return $this->redirectToRoute($from ?? 'sortie_details', ['id' => $sortie->getId()]);
     }
 }
