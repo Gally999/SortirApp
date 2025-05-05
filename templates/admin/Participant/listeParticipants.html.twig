@@ -141,13 +141,13 @@ $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
 let campusChoice = campusEl.value;
 let activeChoice = activeEl.checked;
 
-if (activeChoice && data[7].trim() === "Non") {
+if (activeChoice && data[8].trim() === "Non") {
 return false;
 }
 if (campusChoice === "all") {
 return true;
 } else {
-return data[6] === campusChoice;
+return data[7] === campusChoice;
 }
 
 
