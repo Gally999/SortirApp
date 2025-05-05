@@ -1,0 +1,106 @@
+<div class="flex items-center justify-center h-full">
+
+	<div class=" relative max-w-5xl mt-8 w-full p-8 bg-white shadow-lg rounded-lg border border-gray-200 hover:border hover:border-[#fac108] transition duration-300">
+		<h1 class="text-center mb-12 text-2xl font-bold">Modification du profil de
+			{{ participant.pseudo }}</h1>
+		{% if participant.profilePicture == null %}
+			{% include "partials/profile/defaultProfilePictureAbsolute.html.twig" with {'participant': participant} %}
+		{% else %}
+			<img src="{{ asset('uploads/profile_pictures/' ~ participant.profilePicture) }}" width="200" height="200" class="absolute top-4 left-4 object-cover w-24 h-24 rounded-xl" alt="Photo de profil">
+
+		{% endif %}
+
+		{{ form_start(form) }}
+
+		<div
+			class="space-y-6">
+
+			<!-- Email et Pseudo sur la même ligne -->
+			<div class="flex space-x-8">
+
+				<div class="flex-1">
+					<div class="mb-2">
+						{{ form_label(form.pseudo, null, {'attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+					</div>
+					{{ form_widget(form.pseudo, {'attr': {
+            'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#fac108] focus:ring-opacity-50',
+            'placeholder': 'Entrez votre pseudo'
+          }}) }}
+					{% if form.pseudo.vars.errors|length > 0 %}
+						<p class="text-red-500 text-sm mt-2">
+							{% for error in form.pseudo.vars.errors %}
+								<span>{{ error.message }}</span><br>
+							{% endfor %}
+						</p>
+					{% endif %}
+				</div>
+			</div>
+
+			<!-- Nom et Prénom sur la même ligne -->
+			<div class="flex space-x-8">
+				<div class="flex-1">
+					<div class="mb-2">
+						{{ form_label(form.nom, null, {'attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+					</div>
+					{{ form_widget(form.nom, {'attr': {
+            'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#fac108] focus:ring-opacity-50',
+            'placeholder': 'Entrez votre nom'
+          }}) }}
+					{% if form.nom.vars.errors|length > 0 %}
+						<p class="text-red-500 text-sm mt-2">
+							{% for error in form.nom.vars.errors %}
+								<span>{{ error.message }}</span><br>
+							{% endfor %}
+						</p>
+					{% endif %}
+				</div>
+
+				<div class="flex-1">
+					<div class="mb-2">
+						{{ form_label(form.prenom, null, {'attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+					</div>
+					{{ form_widget(form.prenom, {'attr': {
+            'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#fac108] focus:ring-opacity-50',
+            'placeholder': 'Entrez votre prénom'
+          }}) }}
+					{% if form.prenom.vars.errors|length > 0 %}
+						<p class="text-red-500 text-sm mt-2">
+							{% for error in form.prenom.vars.errors %}
+								<span>{{ error.message }}</span><br>
+							{% endfor %}
+						</p>
+					{% endif %}
+				</div>
+			</div>
+
+			<!-- Téléphone -->
+			<div>
+				<div class="mb-2">
+					{{ form_label(form.telephone, null, {'attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+				</div>
+				{{ form_widget(form.telephone, {'attr': {
+          'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#fac108] focus:ring-opacity-50',
+          'placeholder': 'Entrez votre numéro de téléphone'
+        }}) }}
+				{% if form.telephone.vars.errors|length > 0 %}
+					<p class="text-red-500 text-sm mt-2">
+						{% for error in form.telephone.vars.errors %}
+							<span>{{ error.message }}</span><br>
+						{% endfor %}
+					</p>
+				{% endif %}
+			</div>
+
+
+			<!-- Bouton -->
+			<div class="pt-4">
+				<button type="submit" class="w-full bg-[#fac108] text-black py-3 px-6 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none">
+					Modifier
+				</button>
+			</div>
+
+		</div>
+
+		{{ form_end(form) }}
+	</div>
+</div>

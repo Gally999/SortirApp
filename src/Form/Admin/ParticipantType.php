@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Admin;
 
 use App\Entity\Participant;
 use Symfony\Component\Form\AbstractType;
@@ -16,11 +16,6 @@ class ParticipantType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email', EmailType::class, [
-                'required' => true,
-                'label' => 'Email',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Entrez votre email']
-            ])
             ->add('pseudo', TextType::class, [
                 'required' => true,
                 'label' => 'Pseudo',
@@ -40,12 +35,6 @@ class ParticipantType extends AbstractType
                 'required' => false,
                 'label' => 'Numéro de téléphone',
                 'attr' => ['class' => 'form-control', 'placeholder' => 'Entrez votre numéro de téléphone']
-            ])
-            ->add('profilePicture', FileType::class, [
-                'label' => 'Photo de profil',
-                'required' => false,
-                'mapped' => false,
-
             ]);
     }
 

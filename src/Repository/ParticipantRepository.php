@@ -42,6 +42,15 @@ class ParticipantRepository extends ServiceEntityRepository implements PasswordU
             ->getOneOrNullResult()
         ;
     }
+    public function findAllButId($id): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.id != :val')
+            ->setParameter('val', $id)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
     //    /**
     //     * @return Participant[] Returns an array of Participant objects
