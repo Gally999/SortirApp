@@ -31,7 +31,12 @@
                     {% if sortie.etat.libelleString is same as (etatEnum.Ouverte.value) %}
                         <p>Il reste <strong>{{ placesRestantes }} places</strong> / {{ sortie.nbInscriptionMax }}</p>
                         {% if currentUser not in sortie.participants %}
-                            <a href="{{ path('sortie_inscription', { id: sortie.id }) }}" class="mt-4 w-32 mx-auto text-center btn-hover-transition">Je m'inscris !</a>
+                            <a
+                                href="{{
+                                    path('sortie_inscription', { id: sortie.id, from: 'sortie_details' })
+                                }}"
+                                class="mt-4 w-32 mx-auto text-center btn-hover-transition"
+                            >Je m'inscris !</a>
                         {% endif %}
                     {% elseif sortie.etat.libelleString in [etatEnum.Cloturee.value, etatEnum.EnCours.value, etatEnum.Terminee.value, etatEnum.Annulee.value] %}
                         <p>Les inscriptions sont fermées <i class="fa-solid fa-ban"></i></p>
