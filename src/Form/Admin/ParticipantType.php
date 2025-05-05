@@ -29,7 +29,7 @@ class ParticipantType extends AbstractType
                 'attr' => ['class' => 'form-control', 'placeholder' => 'Entrez votre nom']
             ])
             ->add('prenom', TextType::class, [
-                'required' => false,
+                'required' => true,
                 'label' => 'Prénom',
                 'attr' => ['class' => 'form-control', 'placeholder' => 'Entrez votre prénom']
             ])

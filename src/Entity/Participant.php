@@ -59,12 +59,12 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $nom = null;
 
     #[ORM\Column(length: 50)]
-    #[Assert\NotBlank(message: 'Le prrenom est obligatoire')]
-    #[Assert\Length(max: 50, maxMessage: 'Le prénom doit comporter au plus {{ limit }} caractères')]
+    #[Assert\NotBlank(message: 'Le prenom est obligatoire')]
+    #[Assert\Length(min:2, max: 50, maxMessage: 'Le prénom doit comporter au plus {{ limit }} caractères', minMessage: 'Le prénom doit comporter au moins {{ limit }} caractères')]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 15, nullable: true)]
-    #[Assert\Length(max: 15, maxMessage: 'Le tel doit comporter au plus {{ limit }} caractères')]
+    #[Assert\Length(max: 15, maxMessage: 'Le tel doit comporter au maximum {{ limit }} caractères')]
     private ?string $telephone = null;
 
     #[ORM\Column]
