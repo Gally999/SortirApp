@@ -9,6 +9,9 @@
 {% block body %}
 	<div class="container mx-auto mt-10 px-4">
 		<h1 class="text-3xl font-bold mb-6 text-center">Liste des participants</h1>
+		<div class="my-6 px-4">
+			<a href="{{ path('admin_participants_create') }}" class="w-full bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none ">Créer un utilisateur</a>
+		</div>
 
 		<select name="campus" id="campusEl" class="block w-max mb-4 max-w-xs rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 shadow-sm focus:border-[#fac108] focus:ring focus:ring-[#fac108]/50">
 			<option value="all">Tous les campus</option>
@@ -120,7 +123,9 @@ order: [
 ],
 columnDefs: [
 {
-targets: [1],
+targets: [
+1, 10
+],
 orderable: false
 }
 ]

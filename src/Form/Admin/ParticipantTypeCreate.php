@@ -56,12 +56,6 @@ class ParticipantTypeCreate extends AbstractType
                 'choice_label' => 'nom',
                 
             ])
-            ->add('profilePicture', FileType::class, [
-                'label' => 'Photo de profil',
-                'required' => false,
-                'mapped' => false,
-
-            ])
             ->add('administrateur', CheckboxType::class, [
                 'label' => 'Administrateur',
                 'required' => false,

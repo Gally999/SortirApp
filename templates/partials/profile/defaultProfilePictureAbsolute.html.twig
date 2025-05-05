@@ -15,5 +15,5 @@
 {% set bgColor = pastelColors[colorName] %}
 
 <div class="absolute top-4 left-4 w-24 h-24 rounded-xl flex items-center justify-center" style="background-color: {{ bgColor }};">
-	<p class="text-4xl font-bold">{{ participant.getInitial()|upper }}</p>
+	<p id="profile-initial" class="text-4xl font-bold">{{ participant.getInitial()|upper }}</p>
 </div>

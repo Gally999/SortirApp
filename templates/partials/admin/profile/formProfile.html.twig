@@ -2,7 +2,8 @@
 
 	<div class=" relative max-w-5xl mt-8 w-full p-8 bg-white shadow-lg rounded-lg border border-gray-200 hover:border hover:border-[#fac108] transition duration-300">
 		<h1 class="text-center mb-12 text-2xl font-bold">Modification du profil de
-			{{ participant.pseudo }}</h1>
+			<span class="font-semibold text-[#fac108]">{{ participant.pseudo }}</span>
+		</h1>
 		{% if participant.profilePicture == null %}
 			{% include "partials/profile/defaultProfilePictureAbsolute.html.twig" with {'participant': participant} %}
 		{% else %}
