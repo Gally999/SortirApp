@@ -238,7 +238,8 @@ final class SortieController extends AbstractController
         int $id,
         SortieRepository $sortieRepository,
         ParticipantRepository $participantRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        Request $request,
     )
     {
         $participant = $participantRepository->find($this->getUser()->getId());
@@ -256,6 +257,9 @@ final class SortieController extends AbstractController
         } elseif ($sortie->getNbInscriptionMax() <= $sortie->getParticipants()->count()) {
             $this->addFlash('error', 'Le nombre de participants maximum est atteint');
             return $this->redirectToRoute('sortie_list');
+        } elseif ($sortie->getOrganisateur() == $participant) {
+            $this->addFlash('error', 'Vous êtes déjà inscrit•e à cette sortie en tant qu\'organisateur•ice');
+            return $this->redirectToRoute('sortie_list');
         } elseif ($sortie->getParticipants()->contains($participant)) {
             $this->addFlash('error', 'Vous êtes déjà inscrit•e à cette sortie');
             return $this->redirectToRoute('sortie_list');
@@ -265,7 +269,8 @@ final class SortieController extends AbstractController
         $entityManager->persist($sortie);
         $entityManager->flush();
 
-        $this->addFlash('success', 'Vous êtes inscrit à la sortie ' .  $sortie->getNom() . ' du ' . $sortie->getDateHeureDebut()->format('d/m/Y'));
-        return $this->redirectToRoute('sortie_list');
+        $this->addFlash('success', 'Vous êtes inscrit•e à la sortie ' .  $sortie->getNom() . ' du ' . $sortie->getDateHeureDebut()->format('d/m/Y'));
+        $from = $request->query->get('from');
+        return $this->redirectToRoute($from ?? 'sortie_details', ['id' => $sortie->getId()]);
     }
 }
