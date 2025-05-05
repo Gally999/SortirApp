@@ -37,3 +37,11 @@ h2 {
 .btn-hover-transition {
   @apply bg-[#fac108] text-black py-2 px-4 rounded-md shadow-sm hover:bg-black hover:text-[#fac108] transition duration-300 ease-in-out cursor-pointer focus:outline-none
 }
+
+.p-underline {
+  @apply border-b border-[#fac108]
+}
+
+.link-hover-yellow {
+  @apply hover:underline hover:text-[#fac108] transition
+}
