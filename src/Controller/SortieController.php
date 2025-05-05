@@ -81,11 +81,9 @@ final class SortieController extends AbstractController
             return $this->redirectToRoute('sortie_list');
         }
 
-        $annulation = null;
         if ($sortie->getEtat()->getLibelle() == EtatEnum::Annulee) {
             $annulation = $annulationRepo->findOneBy(['sortie' => $sortie], ['dateAnnulation' => 'DESC']);
         }
-        // dd($annulation);
 
         return $this->render('sortie/details.html.twig', [
             "sortie" => $sortie,
