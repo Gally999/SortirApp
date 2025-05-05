@@ -121,7 +121,7 @@ final class SortieController extends AbstractController
         ]);
     }
 
-    #[Route('/modify/{id}', name: 'sortie_modify', methods: ['GET', 'POST'])]
+    #[Route('/modify/{id}', name: 'sortie_modify', requirements: ['id'=>'\d+'], methods: ['GET', 'POST'])]
     public function modifySortie($id, Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository, SortieRepository $sortieRepository): Response
     {;
         $user = $entityManager->getRepository(Participant::class)->find($this->getUser()->getId());
@@ -172,7 +172,7 @@ final class SortieController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{id}', name: 'sortie_delete', methods: ['POST'])]
+    #[Route('/delete/{id}', name: 'sortie_delete', requirements: ['id'=>'\d+'], methods: ['POST'])]
     public function deleteSortie($id, EntityManagerInterface $entityManager, SortieRepository $sortieRepository, Request $request)
     {
         $user = $entityManager->getRepository(Participant::class)->find($this->getUser()->getId());
@@ -230,6 +230,42 @@ final class SortieController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Sortie mise à jour avec succès (État : ' . $etat->getLibelleString() . ')');
+        return $this->redirectToRoute('sortie_list');
+    }
+
+    #[Route('/{id}/inscription', name: 'sortie_inscription', requirements: ['id'=>'\d+'], methods: ['GET'])]
+    public function inscription(
+        int $id,
+        SortieRepository $sortieRepository,
+        ParticipantRepository $participantRepository,
+        EntityManagerInterface $entityManager
+    )
+    {
+        $participant = $participantRepository->find($this->getUser()->getId());
+        $sortie = $sortieRepository->find($id);
+
+        if (!$sortie) {
+            $this->addFlash('error', 'Sortie introuvable');
+            return $this->redirectToRoute('sortie_list');
+        } elseif ($sortie->getEtat()->getLibelle() != EtatEnum::Ouverte) {
+            $this->addFlash('error', 'Les inscriptions sont fermées pour cette sortie');
+            return $this->redirectToRoute('sortie_list');
+        } elseif ($sortie->getDateLimiteInscription() < new \DateTime()) {
+            $this->addFlash('error', 'Les inscriptions sont fermées pour cette sortie');
+            return $this->redirectToRoute('sortie_list');
+        } elseif ($sortie->getNbInscriptionMax() <= $sortie->getParticipants()->count()) {
+            $this->addFlash('error', 'Le nombre de participants maximum est atteint');
+            return $this->redirectToRoute('sortie_list');
+        } elseif ($sortie->getParticipants()->contains($participant)) {
+            $this->addFlash('error', 'Vous êtes déjà inscrit•e à cette sortie');
+            return $this->redirectToRoute('sortie_list');
+        }
+
+        $sortie->addParticipant($participant);
+        $entityManager->persist($sortie);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Vous êtes inscrit à la sortie ' .  $sortie->getNom() . ' du ' . $sortie->getDateHeureDebut()->format('d/m/Y'));
         return $this->redirectToRoute('sortie_list');
     }
 }
