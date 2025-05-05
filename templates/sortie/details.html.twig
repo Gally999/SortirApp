@@ -2,7 +2,7 @@
 
 {% block body %}
     <div class="mb-10">
-        <h1>{{ sortie.nom }} organisé par le campus de
+        <h1>'{{ sortie.nom }}' organisé par le campus de
             <span class="underline decoration-solid hover:text-[#fac108]">
                 <a
                     href="{{ path('sortie_list', {
@@ -28,9 +28,15 @@
                     {% set etatEnum = enum('App\\Enum\\EtatEnum') %}
                     {% set placesRestantes = sortie.nbInscriptionMax - sortie.participants|length %}
 
-                    {% if sortie.etat.libelleString is same as (etatEnum.Ouverte.value) %}
+                    {% if ((sortie.etat.libelleString is same as (etatEnum.Ouverte.value)) and (sortie.dateLimiteInscription | date > 'now')) %}
                         <p>Il reste <strong>{{ placesRestantes }} places</strong> / {{ sortie.nbInscriptionMax }}</p>
-                        {% if currentUser not in sortie.participants %}
+                        {% if (
+                            (currentUser not in sortie.participants)
+                                and (currentUser is not same as sortie.organisateur)
+                                and (sortie.etat.libelleString is same as (etatEnum.Ouverte.value))
+                                and (sortie.dateLimiteInscription | date > 'now')
+                                and (sortie.nbInscriptionMax > sortie.participants | length)
+                            ) %}
                             <a
                                 href="{{
                                     path('sortie_inscription', { id: sortie.id, from: 'sortie_details' })
@@ -38,15 +44,12 @@
                                 class="mt-4 w-32 mx-auto text-center btn-hover-transition"
                             >Je m'inscris !</a>
                         {% endif %}
-                    {% elseif sortie.etat.libelleString in [etatEnum.Cloturee.value, etatEnum.EnCours.value, etatEnum.Terminee.value, etatEnum.Annulee.value] %}
+                    {% elseif (sortie.etat.libelleString in [etatEnum.Cloturee.value, etatEnum.EnCours.value, etatEnum.Terminee.value, etatEnum.Annulee.value]) or (sortie.dateLimiteInscription | date < 'now') %}
                         <p>Les inscriptions sont fermées <i class="fa-solid fa-ban"></i></p>
                     {% endif %}
-                    {% if sortie.etat.libelleString in [etatEnum.Ouverte.value, etatEnum.Cloturee.value, etatEnum.EnCours.value] %}
-                        {% if currentUser in sortie.participants %}
-                            <a href="{{ path('sortie_create') }}" class="mt-4 w-44 mx-auto text-center btn-hover-transition">Je me désinscris !</a>
-                        {% endif %}
+                    {% if (currentUser in sortie.participants) and sortie.etat.libelleString in [etatEnum.Ouverte.value, etatEnum.Cloturee.value] %}
+                        <a href="{{ path('sortie_desinscription', { id: sortie.id }) }}" class="mt-4 w-44 mx-auto text-center btn-hover-transition">Je me désinscris !</a>
                     {% endif %}
-
 
                 </div>
             </section>

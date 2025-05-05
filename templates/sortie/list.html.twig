@@ -105,12 +105,17 @@
                                 <td class="p-4"><p class="text-sm font-bold text-center">{{ currentUser in s.participants ? '<i class="fa-solid fa-check"></i>' : '' }}</p></td>
                                 <td class="p-4"><p class="text-sm font-bold pb-1 link-hover-yellow"><a href="{{ path('app_profile_show', { pseudo: s.organisateur.pseudo }) }}">{{ s.organisateur.nomComplet }}</a></p></td>
                                 <td class="p-4"><p class="text-sm font-bold">
+                                    {% set etatEnum = enum('App\\Enum\\EtatEnum') %}
                                     <div class="flex flex-row justify-around text-center w-full">
-                                        {% if currentUser in s.participants %}
-                                            <a class="icon-hover-transition" title="Me désinscrire">
+                                        {% if (currentUser in s.participants) and (s.etat.libelleString in [etatEnum.Ouverte.value, etatEnum.Cloturee.value]) %}
+                                            <a class="icon-hover-transition" title="Me désinscrire" href="{{ path('sortie_desinscription', {'id': s.id }) }}">
                                                 <i class="fa-solid fa-xmark mx-1"></i>
                                             </a>
-                                        {% else  %}
+                                        {% elseif (currentUser not in s.participants)
+                                            and (currentUser is not same as s.organisateur)
+                                            and (s.etat.libelleString is same as (etatEnum.Ouverte.value))
+                                            and (s.dateLimiteInscription | date > 'now')
+                                            and (s.nbInscriptionMax > s.participants | length) %}
                                             <a
                                                 href="{{ path('sortie_inscription', { id: s.id, from: 'sortie_list' }) }}"
                                                 class="icon-hover-transition" title="M'inscrire">
@@ -118,7 +123,7 @@
                                             </a>
                                         {% endif %}
 
-                                        {% if currentUser is same as (s.organisateur) and s.etat.libelleString is same as (enum('App\\Enum\\EtatEnum').EnCreation.value)%}
+                                        {% if currentUser is same as (s.organisateur) and s.etat.libelleString is same as (etatEnum.EnCreation.value)%}
                                             <a class="icon-hover-transition" title="Publier" href="{{ path('sortie_publish', { id: s.id }) }}">
                                                 <i class="fa-solid fa-upload mx-1"></i>
                                             </a>
