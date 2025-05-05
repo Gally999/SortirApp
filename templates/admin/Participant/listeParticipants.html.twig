@@ -57,6 +57,8 @@
 							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.telephone ?? '-' }}</td>
 							<td class="px-6 py-4 text-sm text-gray-800">{{ participant.campus.nom }}</td>
 							<td class="px-6 py-4 text-sm">
+
+
 								<form action="{{ path('admin_participants_setActif', {'pseudo': participant.pseudo}) }}" method="POST">
 									<input type="hidden" name="_token" value="{{ csrf_token('set_actif_' ~ participant.pseudo) }}">
 									<button type="submit">
@@ -67,14 +69,22 @@
 								</form>
 							</td>
 							<td class="px-6 py-4 text-sm">
-								<form action="{{ path('admin_participants_setAdmin', {'pseudo': participant.pseudo}) }}" method="POST">
-									<input type="hidden" name="_token" value="{{ csrf_token('set_admin_' ~ participant.pseudo) }}">
-									<button type="submit">
-										<span class="cursor-pointer inline-block px-2 py-1 text-xs rounded-full transition duration-300 ease-in-out {{ participant.administrateur ? 'bg-yellow-200 text-yellow-800 hover:bg-gray-200 hover:text-gray-800' : 'bg-gray-200 text-gray-800 hover:bg-yellow-200 hover:text-yellow-800' }}">
-											{{ participant.administrateur ? 'Oui' : 'Non' }}
-										</span>
-									</button>
-								</form>
+								{% if participant.administrateur %}
+									<span class="cursor-not-allowed inline-block px-2 py-1 text-xs rounded-full transition duration-300 ease-in-out bg-yellow-200 text-yellow-800">
+										Oui
+									</span>
+								{% else %}
+									<form action="{{ path('admin_participants_setAdmin', {'pseudo': participant.pseudo}) }}" method="POST" onsubmit="return confirm('Etes-vous sur de vouloir passer {{ participant.pseudo }} en admin ? Cette action est irreversible')">
+										<input type="hidden" name=" _token" value=" {{ csrf_token('set_admin_' ~ participant.pseudo) }} ">
+										<button type="submit">
+											<span class="cursor-pointer inline-block px-2 py-1 text-xs rounded-full transition duration-300 ease-in-out bg-gray-200 text-gray-800 hover:bg-yellow-200 hover:text-yellow-800">
+												Non
+											</span>
+										</button>
+									</form>
+								{% endif %}
+
+
 							</td>
 							<td class="px-6 py-4 text-sm">
 								<a href="{{path('admin_participants_modify', {'pseudo': participant.pseudo})}}">

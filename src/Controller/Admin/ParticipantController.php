@@ -53,15 +53,24 @@ class ParticipantController extends AbstractController
         elseif($this->getUser()->isAdministrateur() == false){
             $this->addFlash('error', 'Vous devez etre admin pour modifier un participant');
             return $this->redirectToRoute('app_home');
+        }elseif($participant->isAdministrateur() == true){
+            $this->addFlash('error', 'Vous ne pouvez pas modifier un administrateur');
+            return $this->redirectToRoute('admin_participants_list');
         }
 
+        if($participant->isActif() == false){
+            $participant->setActif(true);
+        }
         $participant->setAdministrateur(!$participant->isAdministrateur());
         $entityManager->persist($participant);
         $entityManager->flush();
         if($participant->isAdministrateur()){
             $this->addFlash('success', $participant->getPseudo() .' est maintenant utilisateur');
         }
-        $this->addFlash('success', $participant->getPseudo() .' n\'est plus administrateur');
+        else{
+
+            $this->addFlash('success', $participant->getPseudo() .' n\'est plus administrateur');
+        }
         return $this->redirectToRoute('admin_participants_list');
     }
 
@@ -75,6 +84,7 @@ class ParticipantController extends AbstractController
         }
 
         $participant = $participantsRepo->findParticipantByPseudo($pseudo);
+
         if(!$participant){
             $this->addFlash('error', 'Participant introuvable');
             return $this->redirectToRoute('admin_participants_list');
@@ -85,6 +95,9 @@ class ParticipantController extends AbstractController
         elseif($this->getUser()->isAdministrateur() == false){
             $this->addFlash('error', 'Vous devez etre admin pour modifier un participant');
             return $this->redirectToRoute('app_home');
+        }elseif($participant->isAdministrateur() == true){
+            $this->addFlash('error', 'Vous ne pouvez pas modifier un administrateur');
+            return $this->redirectToRoute('admin_participants_list');
         }
 
         $participant->setActif(!$participant->isActif());
@@ -93,7 +106,9 @@ class ParticipantController extends AbstractController
         if($participant->isActif()){
             $this->addFlash('success', $participant->getPseudo() .' est maintenant actif');
         }
-        $this->addFlash('success', $participant->getPseudo() .' n\'est plus actif, il ne pourra plus se connecter');
+        else{
+            $this->addFlash('success', $participant->getPseudo() .' n\'est plus actif, il ne pourra plus se connecter');
+        }
         return $this->redirectToRoute('admin_participants_list');
     }
 
@@ -111,6 +126,9 @@ class ParticipantController extends AbstractController
         elseif($this->getUser()->isAdministrateur() == false){
             $this->addFlash('error', 'Vous devez etre admin pour modifier un participant');
             return $this->redirectToRoute('app_home');
+        }elseif($participant->isAdministrateur() == true){
+            $this->addFlash('error', 'Vous ne pouvez pas modifier un administrateur');
+            return $this->redirectToRoute('admin_participants_list');
         }
 
         $form = $this->createForm(ParticipantType::class, $participant);
