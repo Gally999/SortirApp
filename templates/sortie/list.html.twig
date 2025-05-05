@@ -111,7 +111,9 @@
                                                 <i class="fa-solid fa-xmark mx-1"></i>
                                             </a>
                                         {% else  %}
-                                            <a class="icon-hover-transition" title="M'inscrire">
+                                            <a
+                                                href="{{ path('sortie_inscription', { id: s.id }) }}"
+                                                class="icon-hover-transition" title="M'inscrire">
                                                 <i class="fa-solid fa-plus mx-1"></i>
                                             </a>
                                         {% endif %}
