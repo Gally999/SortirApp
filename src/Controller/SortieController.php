@@ -273,4 +273,31 @@ final class SortieController extends AbstractController
         $from = $request->query->get('from');
         return $this->redirectToRoute($from ?? 'sortie_details', ['id' => $sortie->getId()]);
     }
+
+    #[Route('{id}/desinscrire', name: 'sortie_desinscription', requirements: ['id'=>'\d+'], methods: ['GET'])]
+    public function desinscrire(
+        int $id,
+        SortieRepository $sortieRepository,
+        ParticipantRepository $participantRepository,
+        EntityManagerInterface $entityManager
+    )
+    {
+        $participant = $participantRepository->find($this->getUser()->getId());
+        $sortie = $sortieRepository->find($id);
+
+        if (!$sortie) {
+            $this->addFlash('error', 'Sortie introuvable');
+            return $this->redirectToRoute('sortie_list');
+        } elseif ($sortie->getEtat()->getLibelle() != EtatEnum::Ouverte && $sortie->getEtat()->getLibelle() != EtatEnum::Cloturee) {
+            $this->addFlash('error', 'Vous ne pouvez plus vous désinscrire de cette sortie');
+            return $this->redirectToRoute('sortie_list');
+        }
+
+        $sortie->removeParticipant($participant);
+        $entityManager->persist($sortie);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Vous avez été désinscrit•e de la sortie ' .  $sortie->getNom() . ' du ' . $sortie->getDateHeureDebut()->format('d/m/Y'));
+        return $this->redirectToRoute('sortie_list');
+    }
 }
