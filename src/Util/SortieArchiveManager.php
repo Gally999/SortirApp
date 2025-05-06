@@ -18,7 +18,6 @@ class SortieArchiveManager
         $today = $today = new \DateTimeImmutable('today');
         $lastMonthStart = $today->modify('-1 month');
         $lastMonthEnd = $lastMonthStart->modify('+1 day');
-        // dd($today, $lastMonthStart, $lastMonthEnd);
 
         $etatHistorisee = $this->etatRepository->findOneBy(['libelle' => EtatEnum::Historisee]);
 
