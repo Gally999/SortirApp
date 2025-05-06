@@ -89,7 +89,7 @@ final class SortieController extends AbstractController
         return $this->render('sortie/details.html.twig', [
             "sortie" => $sortie,
             "currentUser" => $currentUser,
-            "annulation" => $annulation || null,
+            "annulation" => $annulation,
         ]);
     }
 
