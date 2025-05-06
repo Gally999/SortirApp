@@ -81,6 +81,7 @@ final class SortieController extends AbstractController
             return $this->redirectToRoute('sortie_list');
         }
 
+        $annulation = null;
         if ($sortie->getEtat()->getLibelle() == EtatEnum::Annulee) {
             $annulation = $annulationRepo->findOneBy(['sortie' => $sortie], ['dateAnnulation' => 'DESC']);
         }
@@ -88,7 +89,7 @@ final class SortieController extends AbstractController
         return $this->render('sortie/details.html.twig', [
             "sortie" => $sortie,
             "currentUser" => $currentUser,
-            "annulation" => $annulation,
+            "annulation" => $annulation || null,
         ]);
     }
 
@@ -104,7 +105,6 @@ final class SortieController extends AbstractController
         $campus = $user->getCampus();
 
         if ($form->isSubmitted() && $form->isValid()) {
-
 
             $action = $request->get('action'); // 'save' ou 'publish'
             if ($action === 'publish') {
@@ -248,6 +248,7 @@ final class SortieController extends AbstractController
         int $id,
         SortieRepository $sortieRepository,
         ParticipantRepository $participantRepository,
+        EtatRepository $etatRepository,
         EntityManagerInterface $entityManager,
         Request $request,
     )
@@ -275,6 +276,11 @@ final class SortieController extends AbstractController
             return $this->redirectToRoute('sortie_list');
         }
 
+        if ($sortie->getParticipants()->count() == $sortie->getNbInscriptionMax() -1) {
+            $etat = $etatRepository->findOneBy(['libelle' => EtatEnum::Cloturee]);
+            $sortie->setEtat($etat);
+        }
+
         $sortie->addParticipant($participant);
         $entityManager->persist($sortie);
         $entityManager->flush();
@@ -289,7 +295,9 @@ final class SortieController extends AbstractController
         int $id,
         SortieRepository $sortieRepository,
         ParticipantRepository $participantRepository,
-        EntityManagerInterface $entityManager
+        EtatRepository $etatRepository,
+        EntityManagerInterface $entityManager,
+        Request $request,
     )
     {
         $participant = $participantRepository->find($this->getUser()->getId());
@@ -303,12 +311,18 @@ final class SortieController extends AbstractController
             return $this->redirectToRoute('sortie_list');
         }
 
+        if ($sortie->getParticipants()->count() == $sortie->getNbInscriptionMax() && $sortie->getDateLimiteInscription() > new \DateTime()) {
+            $etat = $etatRepository->findOneBy(['libelle' => EtatEnum::Ouverte]);
+            $sortie->setEtat($etat);
+        }
+
         $sortie->removeParticipant($participant);
         $entityManager->persist($sortie);
         $entityManager->flush();
 
         $this->addFlash('success', 'Vous avez été désinscrit•e de la sortie ' .  $sortie->getNom() . ' du ' . $sortie->getDateHeureDebut()->format('d/m/Y'));
-        return $this->redirectToRoute('sortie_list');
+        $from = $request->query->get('from');
+        return $this->redirectToRoute($from ?? 'sortie_details', ['id' => $sortie->getId()]);
     }
 
     #[Route('/{id}/annuler', name: 'sortie_annuler', requirements: ['id'=>'\d+'], methods: ['POST'])]

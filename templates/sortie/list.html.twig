@@ -106,15 +106,16 @@
                                 <td class="p-4"><p class="text-sm font-bold pb-1 link-hover-yellow"><a href="{{ path('app_profile_show', { pseudo: s.organisateur.pseudo }) }}">{{ s.organisateur.nomComplet }}</a></p></td>
                                 <td class="p-4"><p class="text-sm font-bold">
                                     {% set etatEnum = enum('App\\Enum\\EtatEnum') %}
+                                    {% set now = "now" | date_modify("+0 seconds") %}
                                     <div class="flex flex-row justify-around text-center w-full">
                                         {% if (currentUser in s.participants) and (s.etat.libelleString in [etatEnum.Ouverte.value, etatEnum.Cloturee.value]) %}
-                                            <a class="icon-hover-transition" title="Me désinscrire" href="{{ path('sortie_desinscription', {'id': s.id }) }}">
+                                            <a class="icon-hover-transition" title="Me désinscrire" href="{{ path('sortie_desinscription', {'id': s.id, from: 'sortie_list' }) }}">
                                                 <i class="fa-solid fa-xmark mx-1"></i>
                                             </a>
                                         {% elseif (currentUser not in s.participants)
                                             and (currentUser is not same as s.organisateur)
                                             and (s.etat.libelleString is same as (etatEnum.Ouverte.value))
-                                            and (s.dateLimiteInscription | date > 'now')
+                                            and (s.dateLimiteInscription > now)
                                             and (s.nbInscriptionMax > s.participants | length) %}
                                             <a
                                                 href="{{ path('sortie_inscription', { id: s.id, from: 'sortie_list' }) }}"
