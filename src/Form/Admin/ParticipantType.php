@@ -17,6 +17,7 @@ class ParticipantType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        //form builder
         $builder
             ->add('pseudo', TextType::class, [
                 'required' => true,
