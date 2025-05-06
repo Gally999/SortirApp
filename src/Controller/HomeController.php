@@ -16,10 +16,10 @@ class HomeController extends AbstractController
         SortieArchiveManager $sortieArchiveManager,
     ): Response
     {
-        /*$nbCloturees = $sortieClotureManager->cloturerSortiesArriveesALaDateLimite();
+        $nbCloturees = $sortieClotureManager->cloturerSortiesArriveesALaDateLimite();
         $nbCloturees <= 0 ?
             $this->addFlash('info', 'Pas de sortie à clôturer aujourd\'hui'):
-            $this->addFlash('success', $nbCloturees == 1 ? "$nbCloturees sortie clôturée" : "$nbCloturees sorties clôturées");*/
+            $this->addFlash('success', $nbCloturees == 1 ? "$nbCloturees sortie clôturée" : "$nbCloturees sorties clôturées");
 
         $nbArchivees = $sortieArchiveManager->archiverSortiesAPlusUnMois();
         $nbArchivees <= 0 ?
