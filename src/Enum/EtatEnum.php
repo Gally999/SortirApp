@@ -13,4 +13,17 @@ enum EtatEnum: string
     case Terminee = 'Terminee';
     case Annulee = 'Annulee';
     case Historisee = 'Historisee';
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::EnCreation => 'En création',
+            self::Ouverte => 'Ouverte',
+            self::Cloturee => 'Clôturée',
+            self::EnCours => 'En cours',
+            self::Terminee => 'Terminée',
+            self::Annulee => 'Annulée',
+            self::Historisee => 'Historisée',
+        };
+    }
 }

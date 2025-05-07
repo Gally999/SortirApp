@@ -33,7 +33,7 @@
                     <h2>Rendez-vous le {{ sortie.dateHeureDebut | date('d/m/Y') }}</h2>
                     <div class="flex flex-col mx-auto justify-center">
                         <p><span class="border-b border-[#fac108]">Date limite d'inscription :</span> <strong>{{ sortie.dateLimiteInscription | date('d/m/Y')}}</strong></p>
-                        <p>Prévoyez environ <strong>{{ (sortie.duree // 60) }}h {{ (sortie.duree % 60) }}min</strong></p>
+                        <p>Prévoyez environ <strong>{{ (sortie.duree // 60) }}h{{ "%02d"|format(sortie.duree % 60) }}</strong></p>
 
                         {% set placesRestantes = sortie.nbInscriptionMax - sortie.participants|length %}
                         {% set now = "now" | date_modify("+0 seconds") %}
