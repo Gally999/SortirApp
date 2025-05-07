@@ -101,7 +101,7 @@
                                 <td class="p-4"><p class="text-sm font-bold">{{ s.dateHeureDebut | date('d/m/Y H:i') }}</p></td>
                                 <td class="p-4"><p class="text-sm font-bold">{{ s.dateLimiteInscription | date('d/m/Y') }}</p></td>
                                 <td class="p-4"><p class="text-sm font-bold">{{ s.participants | length }} / {{ s.nbInscriptionMax }}</p></td>
-                                <td class="p-4"><p class="text-sm font-bold">{{ s.etat.libelleString }}</p></td>
+                                <td class="p-4"><p class="text-sm font-bold">{{ s.etat.libelle.label }}</p></td>
                                 <td class="p-4"><p class="text-sm font-bold text-center">{{ currentUser in s.participants ? '<i class="fa-solid fa-check"></i>' : '' }}</p></td>
                                 <td class="p-4"><p class="text-sm font-bold pb-1 link-hover-yellow"><a href="{{ path('app_profile_show', { pseudo: s.organisateur.pseudo }) }}">{{ s.organisateur.nomComplet }}</a></p></td>
                                 <td class="p-4"><p class="text-sm font-bold">

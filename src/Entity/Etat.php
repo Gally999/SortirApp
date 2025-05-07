@@ -6,19 +6,27 @@ use App\Enum\EtatEnum;
 use App\Repository\EtatRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: EtatRepository::class)]
 class Etat
 {
-    public const ETATS = ['Ouverte', 'Cloturee', 'En Cours', 'Terminee', 'Annulee', 'Historisee'];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Assert\Choice(choices: self::ETATS, message: 'Choisissez un état de sortie valide')]
-    #[ORM\Column(length: 50)]
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        if (!in_array($this->libelle?->value, EtatEnum::values(), true)) {
+            $context->buildViolation('Choisissez un état de sortie valide')
+                ->atPath('libelle')
+                ->addViolation();
+        }
+    }
+    #[ORM\Column(length: 50, enumType: EtatEnum::class)]
     private ?EtatEnum $libelle = null;
 
     public function getId(): ?int

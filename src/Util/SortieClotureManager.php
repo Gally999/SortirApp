@@ -15,8 +15,10 @@ class SortieClotureManager
 
     public function cloturerSortiesArriveesALaDateLimite(): int
     {
+        // Date range is 5 days in case a chron job has failed in previous days
         $today = new \DateTimeImmutable('today');
         $tomorrow = $today->modify('+1 day');
+        $fiveDaysAgo = $today->modify('-5 days');
 
         $etatCloturee = $this->etatRepository->findOneBy(['libelle' => EtatEnum::Cloturee]);
         $etatOuverte = $this->etatRepository->findOneBy(['libelle' => EtatEnum::Ouverte]);
@@ -27,7 +29,7 @@ class SortieClotureManager
             ->where('s.dateLimiteInscription >= :start')
             ->andWhere('s.dateLimiteInscription < :end')
             ->andWhere('s.etat = :etatOuverte')
-            ->setParameter('start', $today)
+            ->setParameter('start', $fiveDaysAgo)
             ->setParameter('end', $tomorrow)
             ->setParameter('etatCloturee', $etatCloturee)
             ->setParameter('etatOuverte', $etatOuverte)
