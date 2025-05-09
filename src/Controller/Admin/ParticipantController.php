@@ -30,6 +30,8 @@ class ParticipantController extends AbstractController
      * @param EntityManagerInterface $entityManager The entity manager to handle database operations.
      *
      * @return Response The HTTP response, either rendering the modification form or redirecting.
+     * 
+     * Injection de dépendance Repository grâce au Service Container de Symfony 
      */
     #[Route('/modify/{pseudo}', name: '_modify', methods:['GET', 'POST'])]
     public function modifyParticipant($pseudo,ParticipantRepository $participantsRepo, EntityManagerInterface $entityManager, Request $request):Response 
