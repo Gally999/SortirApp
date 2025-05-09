@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Campus;
-use App\Model\SortieSearchData;
+use App\Model\SortieFilterData;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -69,7 +69,7 @@ class SortieFilterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => SortieSearchData::class,
+            'data_class' => SortieFilterData::class,
             'csrf_protection' => false,
             'user' => null,
         ]);

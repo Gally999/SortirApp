@@ -8,7 +8,7 @@ use App\Entity\Sortie;
 use App\Enum\EtatEnum;
 use App\Form\SortieFilterType;
 use App\Form\SortieType;
-use App\Model\SortieSearchData;
+use App\Model\SortieFilterData;
 use App\Repository\AnnulationRepository;
 use App\Repository\CampusRepository;
 use App\Repository\EtatRepository;
@@ -30,14 +30,13 @@ final class SortieController extends AbstractController
         Request $request,
     ): Response {
         $participant = $participantRepository->find($this->getUser()->getId());
-        $searchData = new SortieSearchData();
+        $searchData = new SortieFilterData();
         $searchForm = $this->createForm(SortieFilterType::class, $searchData, [
             'user' => $participant,
         ]);
         $searchForm->handleRequest($request);
 
         if ($searchForm->isSubmitted() && $searchForm->isValid()) {
-
             $sorties = $sortieRepository->findSortiesWithFilters(
                 $searchData->campus,
                 $participant,

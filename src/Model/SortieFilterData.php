@@ -6,7 +6,7 @@ use App\Entity\Campus;
 use DateTimeInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SortieSearchData
+class SortieFilterData
 {
     public Campus $campus;
 
