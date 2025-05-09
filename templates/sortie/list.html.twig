@@ -26,32 +26,32 @@
                             </p>
                         {% endif %}
                 </div>
-                    <div class="flex flex-col m-3">
-                        <div class="flex flex-row">
-                            <p class="content-center my-auto min-w-40">{{ form_label(searchForm.startDate) }}</p>
-                            {{ form_widget(searchForm.startDate, {'attr': {'class': 'form-input mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
-                        </div>
-                        {% if searchForm.startDate.vars.errors|length > 0 %}
-                            <p class="text-red-500 text-sm mt-2 text-center">
-                                {% for error in searchForm.startDate.vars.errors %}
-                                    <span>{{ error.message }}</span><br>
-                                {% endfor %}
-                            </p>
-                        {% endif %}
+                <div class="flex flex-col m-3">
+                    <div class="flex flex-row">
+                        <p class="content-center my-auto min-w-40">{{ form_label(searchForm.startDate) }}</p>
+                        {{ form_widget(searchForm.startDate, {'attr': {'class': 'form-input mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
                     </div>
-                    <div class="flex flex-col m-3">
-                        <div class="flex flex-row">
-                            <p class="content-center my-auto min-w-40">{{ form_label(searchForm.endDate) }}</p>
-                            {{ form_widget(searchForm.endDate, {'attr': {'class': 'form-input mt-1 block p-2 w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
-                        </div>
-                        {% if searchForm.endDate.vars.errors|length > 0 %}
-                            <p class="text-red-500 text-sm mt-2 text-center">
-                                {% for error in searchForm.endDate.vars.errors %}
-                                    <span>{{ error.message }}</span><br>
-                                {% endfor %}
-                            </p>
-                        {% endif %}
+                    {% if searchForm.startDate.vars.errors|length > 0 %}
+                        <p class="text-red-500 text-sm mt-2 text-center">
+                            {% for error in searchForm.startDate.vars.errors %}
+                                <span>{{ error.message }}</span><br>
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="flex flex-col m-3">
+                    <div class="flex flex-row">
+                        <p class="content-center my-auto min-w-40">{{ form_label(searchForm.endDate) }}</p>
+                        {{ form_widget(searchForm.endDate, {'attr': {'class': 'form-input mt-1 block p-2 w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-[#fac108] focus:ring-opacity-50'}}) }}
                     </div>
+                    {% if searchForm.endDate.vars.errors|length > 0 %}
+                        <p class="text-red-500 text-sm mt-2 text-center">
+                            {% for error in searchForm.endDate.vars.errors %}
+                                <span>{{ error.message }}</span><br>
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
             </div>
 
             <div class="flex flex-col items-start">
@@ -181,4 +181,3 @@
         </div>
     </section>
 {% endblock %}
-
