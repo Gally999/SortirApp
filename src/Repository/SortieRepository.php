@@ -6,6 +6,7 @@ use App\Entity\Campus;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Enum\EtatEnum;
+use App\Model\SortieFilterData;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -71,15 +72,8 @@ class SortieRepository extends ServiceEntityRepository
     }
 
     public function findSortiesWithFilters(
-        Campus $campus,
+        SortieFilterData $filterData,
         ?Participant $user = null,
-        ?string $searchTerm = null,
-        ?\DateTime $startDate = null,
-        ?\DateTime $endDate = null,
-        bool $isOrganisateur = false,
-        bool $isInscrit = false,
-        bool $isNotInscrit = false,
-        bool $showTerminees = false,
     ): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
@@ -88,9 +82,9 @@ class SortieRepository extends ServiceEntityRepository
             ->leftJoin('s.etat', 'e')->addSelect('e')
             ->join('s.organisateur', 'o')->addSelect('o')
             ->where('s.campus = :campus')
-            ->setParameter('campus', $campus);
+            ->setParameter('campus', $filterData->campus);
 
-        if ($showTerminees) {
+        if ($filterData->showTerminees) {
             $queryBuilder->andWhere('e.libelle = :etatTerminee')
                 ->setParameter('etatTerminee', EtatEnum::Terminee);
         } else {
@@ -118,38 +112,38 @@ class SortieRepository extends ServiceEntityRepository
                 ->addOrderBy('s.dateHeureDebut', 'ASC');
         }
 
-        if ($searchTerm) {
+        if ($filterData->searchTerm) {
             $queryBuilder->andWhere('s.nom LIKE :search')
-                ->setParameter('search', '%' . $searchTerm . '%');
+                ->setParameter('search', '%' . $filterData->searchTerm . '%');
         }
 
-        if ($startDate) {
+        if ($filterData->startDate) {
             $queryBuilder
                 ->andWhere('s.dateHeureDebut >= :startDate')
-                ->setParameter('startDate', $startDate);
+                ->setParameter('startDate', $filterData->startDate);
         }
 
-        if ($endDate) {
+        if ($filterData->endDate) {
             $queryBuilder
                 ->andWhere('s.dateHeureDebut <= :endDate')
-                ->setParameter('endDate', $endDate);
+                ->setParameter('endDate', $filterData->endDate);
         }
 
-        if ($isOrganisateur && $user) {
+        if ($filterData->isOrganisateur && $user) {
             $queryBuilder
                 ->andWhere('s.organisateur = :user')
                 ->setParameter('user', $user);
         }
 
         // Si je suis inscrit
-        if ($isInscrit && $user) {
+        if ($filterData->isInscrit && $user) {
             $queryBuilder
                 ->andWhere(':user MEMBER OF s.participants')
                 ->setParameter('user', $user);
         }
 
         // Si je ne suis PAS inscrit
-        if ($isNotInscrit && $user) {
+        if ($filterData->isNotInscrit && $user) {
             $queryBuilder
                 ->andWhere(':user NOT MEMBER OF s.participants')
                 ->setParameter('user', $user);

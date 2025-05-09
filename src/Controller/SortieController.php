@@ -38,15 +38,8 @@ final class SortieController extends AbstractController
 
         if ($searchForm->isSubmitted() && $searchForm->isValid()) {
             $sorties = $sortieRepository->findSortiesWithFilters(
-                $searchData->campus,
+                $searchData,
                 $participant,
-                $searchData->searchTerm,
-                $searchData->startDate,
-                $searchData->endDate,
-                $searchData->isOrganisateur,
-                $searchData->isInscrit,
-                $searchData->isNotInscrit,
-                $searchData->showTerminees
             );
         } else {
             // Sorties par défaut - état = actif + campus de l'utilisateur connecté
