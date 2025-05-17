@@ -20,7 +20,7 @@ Une application de gestion de sorties entre participants (type meetup), dévelop
 ### 1. Cloner le projet
 
 ```bash
-git clone https://github.com/votre-utilisateur/sortirapp.git
+git clone https://github.com/Goadney/SortirApp.git
 cd sortirapp
 ```
 
